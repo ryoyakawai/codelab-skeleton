@@ -1,0 +1,16 @@
+body {
+  font-family: 'Roboto', 'Noto', sans-serif;
+  font-size: 14px;
+  margin: 0;
+  padding: 24px;
+  overflow-y:hidden;
+}
+
+section {
+  padding: 20px 0;
+}
+
+section > div {
+  padding: 14px;
+  font-size: 16px;
+}

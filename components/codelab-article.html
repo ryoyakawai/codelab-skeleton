@@ -1,0 +1,75 @@
+<dom-module id="codelab-article">
+  <style>
+  h2 {
+    font-size:30px;
+    font-weight:500;
+    margin:0px 0px;
+  }
+  #neon-animatable {
+    margin:0px 10px;
+  }
+  #drawerpanel_main_outer {
+    width:100%; 
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+
+  #drawerpanel_main_inner {
+    background-color:#fff;
+    padding:25px 20px 25px 20px;
+  }
+  </style>
+  
+  <template>
+    <neon-animatable id="neon-animatable">
+      <paper-material id="tutorial_contents" elevation="1">
+        <div id="drawerpanel_main_outer">
+          <div id="drawerpanel_main_inner">
+            <h2 id="step_label"></h2>
+            <content></content>
+          </div>
+        </div>
+      </paper-material>
+    </neon-animatable>
+  </template>
+
+  <script>
+    Polymer({
+      is: "codelab-article",
+      properties: {
+        step_label: {
+          type: String,
+          value: ""
+        }
+
+      },
+      ready: function() {
+          console.log(this.step_label);
+          this.$["step_label"].innerText=this.step_label;
+          window.addEventListener("paper-responsive-change", function(event){
+              var elem=event.target;
+              checkResponsiveStatus.bind(this)(elem);
+          }.bind(this));
+          function checkResponsiveStatus(elem) {
+              if(elem.hasAttribute("narrow")===true) {
+                  this.$["neon-animatable"].style.setProperty("margin", "0px 0px");
+              } else {
+                  this.$["neon-animatable"].style.setProperty("margin", "0px 10px");
+              }
+          }
+      },
+      attached: function() {
+          this.async(function() { // used be a domReady
+          });
+      },
+      toggleMargin: function() {
+          if(this.$["neon-animatable"].hasAttribute("narrow")==true) {
+              this.$["neon-animatable"].style.setProperty("margin", "0px 0px");
+          } else {
+              this.$["neon-animatable"].style.setProperty("margin", "0px 10px");
+          }
+      }
+
+    });
+  </script>
+</dom-module>

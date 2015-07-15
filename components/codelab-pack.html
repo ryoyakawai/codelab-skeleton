@@ -1,0 +1,579 @@
+<dom-module id="codelab-pack">
+  <style is="custom-style">
+  @media (max-width: 800px) {
+    paper-toolbar {
+      height: 64px;
+    }
+  }
+
+  #paperDrawerPanel {
+    top:60px;
+  }
+
+  #drawerpanel_main_footer {
+    width:95%;
+    text-align:center;
+    height:100px;
+    padding:10px 10px 10px 30px;
+    margin:10px auto;
+  }
+
+  #paperDrawerPanel [main] {
+    background-color: var(--google-grey-100);
+    padding:20px;
+    overflow-x:hidden;
+    overflow-y:auto;
+  }
+
+  #paperDrawerPanel [drawer] {
+    background-color: var(--google-grey-100);
+    padding:4px 20px 120px 20px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+
+  paper-button {
+    color: white;
+    margin: 10px;
+    background-color: var(--google-blue-700);
+    white-space: nowrap;
+  }
+  paper-header-panel { 
+    position:fixed;
+    top:0px; left:0px;
+    width:100%;
+    height:60px;
+    color:#eeeeee;
+    background:#4285f4;
+    z-index:2
+  }
+  .paper-header {
+    width:100%;
+    height: 64px;
+    font-size: 16px;
+    line-height: 60px;
+    padding: 0 10px;
+    color: white;
+    transition: 0.2s;
+    vertical-align:middle;
+  }
+  div.title {
+    position: absolute;
+    top:0px;
+    width:80%;
+    display:inline;
+    font-size:1.4em;
+    font-weight: 300;
+    padding-left:0;
+    padding: 2px 0;
+    color: white;
+    margin:0 0 0 12px;
+    transition:1.5s;
+    white-space:nowrap;
+  }
+  #menu_button {
+    padding:0px 5px;
+    border-style:none;
+    transition:1.0s;
+  }
+  #menu_button:focus {
+    outline:none;
+  }    
+  #menu_button:hover {
+    cursor:pointer;
+  }    
+  .icon-right {
+    position:absolute;
+    top:0px; right:0px;
+    width:70px; height:40px; 
+    margin: 12px 0px 0px 0px;
+    padding:0px 5px;
+    z-index:2;
+    background-color:rgba(66, 133, 244, 0.8);
+  }
+  .horizontal-section {
+    padding: 0 !important;
+  }
+  
+  paper-item.toc-item {
+    padding:5px;
+  }
+  #spacer.p64 {
+    height:0px;
+  }
+  .fab {
+    position: relative;
+    display: inline-block;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    color: #fff;
+    overflow: hidden;
+    transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0.2s;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+  }
+  .fab.forward {
+    position:fixed;
+    right:40px; bottom:25px;
+    background-color: #00BCD4;
+  }
+  .fab.backword {
+    position:fixed;
+    bottom:25px;
+    background-color: #999;
+  }
+  #page_control {
+    position:fixed;
+    bottom:0px;
+  }
+  .fab > iron-icon {
+    margin: 16px;
+  }
+
+  .fab > iron-icon::shadow path {
+    fill: #fff;
+  }
+  /* ToC */
+  .toc-item {
+    font-size: 14px;
+    color: #8f8f8f;
+    overflow: hidden;
+    border-radius: 2px; }
+  .toc-item i {
+    display: inline-block;
+    width: 30px;
+    min-width: 30px;
+    background: #fff;
+    border-radius: 50%;
+    text-align: center;
+    height: 30px;
+    vertical-align: middle;
+    line-height: 30px;
+    border: 1px solid #BDBDBD;
+    margin-right: 8px; }
+  .toc-item i::before,
+  .toc-item i::after {
+    content: '';
+    display: block;
+    border-left: 1px solid #BDBDBD;
+    width: 0;
+    height: 50px; }
+  .toc-item i::before {
+    margin-top: -50px;
+    margin-left: 14px; }
+  .toc-item i::after {
+    margin-left: 14px; }
+  .toc-item.completed,
+  .toc-item.core-selected {
+    color: #333333; }
+  .toc-item.core-selected {
+    background-color: #E0E0E0; }
+  .toc-item.completed i,
+  .toc-item.completed i::before,
+  .toc-item.completed i::after,
+  .toc-item.core-selected i,
+  .toc-item.core-selected i:before {
+    border-color: #00BCD4; }
+  .toc-item.toc-item-first i::before,
+  .toc-item.toc-item-last i::after {
+    display: none;}
+  paper-menu {
+    background-color:#f5f5f5;
+  }
+  paper-item {
+    cursor:pointer;
+    border-style:none;
+    outline:0px none black;
+  }
+
+  </style>
+  <template>
+    <paper-header-panel mode="{{mode}}" class="blue">
+      <div class="paper-header">
+        <iron-icon id="menu_button" icon="menu" noink="" on-click="toggleMenu" role="button" tabindex="0" aria-label="menu"></iron-icon>
+        <div id="title" class="title"></div>
+        <div class="icon-right">
+          <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+            <g>
+              <circle r="18" cy="20" cx="20" stroke-width="2" stroke="rgba(255,255,255,0.2)" fill="none"></circle>
+              <circle id="countdown_progress" r="18" cy="20" cx="20" stroke-width="2" stroke="rgba(255,255,255,0.6)" fill="none" stroke-dashoffset="38.46808510638298"></circle>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="content"></div>
+    </paper-header-panel>
+    <paper-drawer-panel id="paperDrawerPanel" drawer-width="256px" responsive-width="800px" transition>
+      <div drawer id="drawerpanel_drawer">
+
+        <paper-menu id="toc-items">
+          <template is="dom-repeat" items="{{tocList}}" index-as="idx">
+            <paper-item step$="{{computedIdx(idx)}}" class$="{{computedTocItem(idx, selectedStep, tocList.length)}}" on-click="stepUpdated">
+              <i class="toc-number">{{computedIdx(idx)}}</i><span>{{item.step_label}}</span>
+            </paper-item>
+          </template>
+        </paper-menu>
+
+      </div>
+      <div main id="drawerpanel_main">
+        
+        <neon-animated-pages id="codelab-pages" class="flex" selected="[[selectedStep]]" entry-animation="[[entryAnimation]]" exit-animation="[[exitAnimation]]">
+          <content></content>
+        </neon-animated-pages>
+        
+        <div id="drawerpanel_main_footer">
+          <span>footer</span>
+          <div id="page_control">
+            <div id="prevStep" class="fab backword">
+              <iron-icon icon="arrow-back"></iron-icon>
+              <paper-ripple class="circle" recenters></paper-ripple>
+            </div>
+            <div id="nextStep" class="fab forward">
+              <iron-icon icon="arrow-forward"></iron-icon>
+              <paper-ripple class="circle" recenters></paper-ripple>
+            </div>
+          </div>
+        </div>
+    </paper-drawer-panel>
+  </template>
+  <script>
+  Polymer({
+      is:"codelab-pack",
+      properties : {
+          label: {
+              type:String,
+              value: "(default)",
+          },
+          step_label: {
+              type:String,
+              value: "(default)",
+          },
+          label_id: {
+              type:String,
+              value: "(default)",
+          },
+          feedback_link: {
+              type:String,
+              value: "(default)",
+          },
+          category: {
+              type:String,
+              value: "(default)",
+          },
+          environment: {
+              type:String,
+              value: "(default)",
+          },
+          mode: {
+              type:String,
+              value:"seamed",
+          },
+          totalDuration: {
+              type:Number,
+              value:0,
+          },
+          duration: {
+              type:Number,
+              value:0,
+          },
+          selectedStep: {
+              type:Number,
+              value:0,
+          },
+          cookie: {
+              type:String,
+              value:"{}",
+          },
+          steps: {
+              type:Array,
+              value:[],
+          },
+          temp: {
+              type:Array,
+              value:[],
+          },
+          tocList: {
+              type:Array,
+              value:[],
+          }
+      },
+      computedIdx: function(idx) {
+          return idx+1;
+      },
+      computedTocItem: function(idx, selectedStep, length) {
+          var out="";
+          if(idx===0) out="toc-item-first ";
+          if(idx===length-1) out="toc-item-last ";
+          if(idx<=selectedStep) out+="completed ";
+          return "toc-item "+out;
+      },
+      stepUpdated: function(event) {
+          var step=event.target.getAttribute("step");
+          if(step==null) {
+              step=event.target.parentNode.getAttribute("step");
+          }
+          var idx=step-1;
+          var tocElems=this.querySelector("#toc-items").getElementsByTagName("paper-item");
+          for(var i=0; i<tocElems.length; i++) {
+              tocElems[i].className=tocElems[i].className.replace(" completed", "");
+              if(i<=idx) {
+                  tocElems[i].className=tocElems[i].className+" completed";
+              }
+          }
+          this.selectedStep=idx;
+      },
+      ready: function(){
+          this.menuItems = [
+            { label: "Pizza0", ordered: 0 },
+            { label: "Pasta1", ordered: 0 },
+            { label: "Toast2", ordered: 0 }
+          ];
+
+          //var p=location.pathname.split("/");
+          this.codelab_id=this.label.replace(/ /g,"_").toLowerCase();
+          document.title = "Codelab: " + this.label;
+          this.$["title"].innerText = this.label;
+          this.steps = this.querySelectorAll('codelab-article');
+
+          var arraySteps=[];
+          for (var i=0; i<this.steps.length; i++) {
+              this.steps[i].step=i;
+              this.steps[i].label=this.label;
+              this.steps[i].step_label=this.steps[i].getAttribute('step_label');
+              this.steps[i].feedback_link = this.feedback_link;
+              var parsedDuration = this.parseTime(this.steps[i].getAttribute('duration'));
+              this.steps[i].timeToStart = this.totalDuration;
+              this.totalDuration += parsedDuration;
+              arraySteps.push({
+                  "steps":i, "label":this.steps[i].label, 
+                  "step_label": this.steps[i].step_label, 
+                  "feedback_link": this.steps[i].feedback_link, 
+                  "timeToStar":this.steps[i].totalDuration
+              });
+          }
+          this.tocList=arraySteps;
+          console.log("[tocList] ", this.tocList);
+
+          // Set defaults
+          this.cookie = this.cookie || '{}';
+          this.setSelectedStepFromHash();
+          var codelabCookie = JSON.parse(this.cookie)[this.codelab_id];
+          if (codelabCookie && codelabCookie.currentStep !== undefined) {
+              this.lastStep = codelabCookie.currentStep;
+              if (this.selectedStep != this.lastStep) {
+                  this.$.resume_dialog.toggle();
+              }
+          }
+
+          this.handleKeyShortcuts_ = this.handleKeyShortcuts.bind(this);
+          document.addEventListener('keydown', this.handleKeyShortcuts_);
+          this.setSelectedStepFromHash_ = this.setSelectedStepFromHash.bind(this);
+          window.addEventListener('popstate', this.setSelectedStepFromHash_);
+
+          this.selectedStep = 0;
+
+          this.addMenuToDrawer();
+
+          console.log(this.steps, this.totalDuration, this.cookie, this.codelab_id);
+          console.log(this.$["codelab-pages"]);
+
+      },
+      /**
+       * Parses a time string in 'hh:mm:ss' format and returns number of seconds.
+       * @param {string} timeStr Time string in 'hh:mm:ss' format.
+       * @return {number} Number of seconds.
+       */
+      parseTime: function (timeStr) {
+          if (!timeStr) {
+              return 0;
+          }
+          var timeParts = timeStr.split(':');
+          var s = parseInt(timeParts[timeParts.length - 1], 10);
+          var m = parseInt(timeParts[timeParts.length - 2], 10);
+          var h = parseInt(timeParts[timeParts.length - 3], 10) || 0;
+          return s + 60 * m + 60*60 * h;
+      },
+      addMenuToDrawer: function() {
+          var section=document.createElement("section");
+          section.setAttribute("id", "drawer_menu");
+          for(var i=0; i<this.steps.length; i++) {
+              var elem=document.createElement("paper-item");
+              elem.setAttribute("label", i+1);
+              elem.className="toc-item ";
+              if(i==0) elem.className+="toc-item-first ";
+              if(i==this.steps.length-1) elem.className+="toc-item-last ";
+              elem.setAttribute("tabindex", 0);
+              elem.setAttribute("role", "listitem");
+              elem.setAttribute("on-click", "{{ changeStep }}");
+              elem.className+="style-scope codelab-pack ";
+
+              var ielem=document.createElement("i");
+              ielem.className="toc-number ";
+              ielem.className+="style-scope codelab-pack ";
+              ielem.innerHTML=i+1;
+              elem.appendChild(ielem);
+
+              var span=document.createElement("span")
+              span.innerText=this.steps[i].label;
+              elem.appendChild(span);
+
+              //this.$["drawerpanel_drawer"].appendChild(elem);
+          }
+      },
+      changeStep: function(event) {
+          console.log(event.target);
+      },
+      setSelectedStepFromHash: function() {
+        var stepFromHash = window.location.hash ?
+            parseInt(window.location.hash.replace('#', '')) : 1;
+        if (stepFromHash != this.selectedStep) {
+          this.selectedStep = stepFromHash;
+        }
+      },
+      handleKeyShortcuts: function(e) {
+        switch(e.keyCode) {
+          case 33: // PAGE_UP
+          case 37: // LEFT
+            this.prevStep();
+            break;
+          case 34: // PAGE_DOWN
+          case 39: // RIGHT
+            this.nextStep();
+            break;
+        }
+      },
+      selectedStepChanged: function(oldVal, newVal) {
+          this.selectedStep = parseInt(this.selectedStep, 10);
+          this.updateStepUI();
+          // Update cookie.
+          this.setLastLocation();
+          // Update hash.
+          window.location.hash = '#' + this.selectedStep;
+          // Track analytics.
+          this.tracking();
+      },
+      setLastLocation: function() {
+          var cookie = JSON.parse(this.cookie);
+          cookie[this.codelab_id] = {
+              currentStep: this.selectedStep
+          };
+          this.cookie = JSON.stringify(cookie);
+      },
+      updateStepUI: function() {
+          // Update ToC.
+          var items = this.$["toc-items"].querySelectorAll('.toc-item');
+          if (items.length) {
+              var completed = true;
+/*
+              for (var i = 0; i < this.selectedStep - 1; i++) {
+                  items[i].classList.add('completed');
+              }
+              for (var i = this.selectedStep - 1; i < items.length; i++) {
+                  items[i].classList.remove('completed');
+              }
+*/
+          }
+/*
+          // Update step view.
+          this.$.pages.scrollIntoView(true);
+          this.steps[this.selectedStep - 1].scrollIntoView(true);
+          // Update progress bar.
+          this.updateProgress();
+*/
+      },
+      attached: function() {
+          this.async(function() { // used be a domReady
+              this.updateStepUI();
+
+              this.$.drawerpanel_main.addEventListener('scroll', function(event) {
+                  this.mode = (event.target.scrollTop > 0) ? 'standard' : 'seamed';
+              }.bind(this));
+              
+              this.$.drawerpanel_drawer.addEventListener('scroll', function(event) {
+                  this.mode = (event.target.scrollTop > 0) ? 'standard' : 'seamed';
+              }.bind(this));
+              
+              this.$["nextStep"].addEventListener("click", function(event){
+                  this.nextStep();
+              }.bind(this));
+              this.$["prevStep"].addEventListener("click", function(event){
+                  this.prevStep();
+              }.bind(this));
+
+
+              this.$["menu_button"].addEventListener("click", function(event) {
+                  this.$["paperDrawerPanel"].togglePanel();
+              }.bind(this));
+
+              this.$["paperDrawerPanel"].addEventListener("paper-responsive-change", function(event) {
+                  if(event.detail.narrow==true) {
+                      this.$["menu_button"].style.setProperty("width", "24px");
+                  } else {
+                      this.$["menu_button"].style.setProperty("width", "0px");
+                  }
+              }.bind(this));
+
+              checkResponsiveState.bind(this)(document.getElementById("paperDrawerPanel"));
+              window.addEventListener("paper-responsive-change", function(event){
+                  var elem=event.target;
+                  checkResponsiveState.bind(this)(elem);
+              }.bind(this));
+              function checkResponsiveState(elem) {
+                  if(elem.hasAttribute("narrow")==true) {
+                      this.$["prevStep"].style.setProperty("left", "10px");
+                      this.$["nextStep"].style.setProperty("right", "10px");
+                      this.$["drawerpanel_main"].style.setProperty("padding", "0");
+                      this.$["menu_button"].style.setProperty("width", "24px");
+                  } else {
+                      this.$["prevStep"].style.removeProperty("left");
+                      this.$["nextStep"].style.setProperty("right", "40px");
+                      this.$["drawerpanel_main"].style.setProperty("padding", "10px 10px 10px 10px");
+                      this.$["menu_button"].style.setProperty("width", "0px");
+                  }
+              };
+
+              // for drawer init
+              var elem=this.$["paperDrawerPanel"];
+              var event = new CustomEvent("paper-responsive-change", {detail:elem});
+              elem.dispatchEvent(event);
+
+              // adjusting content_inner_size                                                                                                                                    
+              adjustContentInnerSize.bind(this)(0);
+              window.onresize=adjustContentInnerSize.bind(this);
+              function adjustContentInnerSize(offset) {
+                  if(typeof offset=="undefined") offset=0;
+                  this.$["drawerpanel_main"].style.setProperty("height", parseInt(window.innerHeight)-80+offset + "px");
+                  this.$["drawerpanel_drawer"].style.setProperty("height", parseInt(window.innerHeight)-80+offset + "px");
+              }
+              
+              this.$["paperDrawerPanel"].fire("paper-responsive-change");
+
+          });
+      },
+      detached: function() {
+        //window.removeEventListener('popstate', this.setSelectedStepFromHash_);
+        document.removeEventListener('keydown', this.handleKeyShortcuts_);
+      },
+      highlightSnippets: function() {
+          this.steps[this.selectedStep - 1].highlight();
+      },
+      prevStep: function() {
+          if (this.selectedStep - 1 >= 0) {
+              this.entryAnimation = 'slide-from-left-animation';
+              this.exitAnimation = 'slide-right-animation';
+              this.selectedStep -= 1;
+              this.$.drawerpanel_main.scrollTop=0;
+          }
+      },
+      nextStep: function() {
+        if (this.selectedStep + 1 < this.steps.length) {
+              this.entryAnimation = 'slide-from-right-animation';
+              this.exitAnimation = 'slide-left-animation';
+              this.selectedStep += 1;
+              this.$.drawerpanel_main.scrollTop=0;
+          }
+      },
+  });
+  </script>
+</dom-module>
