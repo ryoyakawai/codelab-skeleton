@@ -194,13 +194,20 @@
         <iron-icon id="menu_button" icon="menu" noink="" on-click="toggleMenu" role="button" tabindex="0" aria-label="menu"></iron-icon>
         <div id="title" class="title"></div>
         <div class="icon-right">
-          <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
-            <g>
-              <circle r="18" cy="20" cx="20" stroke-width="2" stroke="rgba(255,255,255,0.2)" fill="none"></circle>
-              <circle id="countdown_progress" r="18" cy="20" cx="20" stroke-width="2" stroke="rgba(255,255,255,0.6)" fill="none" stroke-dashoffset="38.46808510638298"></circle>
-            </g>
-          </svg>
+          <div id="countdown" title="Time remaining" hidden?="{{duration == 0}}">
+            <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+              <g>
+                <circle r="18" cy="20" cx="20" stroke-width="2" stroke="rgba(255,255,255,0.2)" fill="none"/>
+                <circle id="countdown_progress" r="18" cy="20" cx="20" stroke-width="2" stroke="rgba(255,255,255,0.6)" fill="none"/>
+              </g>
+            </svg>
+            <strong>{{ duration/60 | roundUp }}</strong>
+            <strong>mins</strong>
+          </div>
+          <paper-progress id="progress" value="0" min="0" max="1"
+                          hidden?="{{totalDuration != 0 || progress == 0 || progress == 1}}"></paper-progress>
         </div>
+      </div>
       </div>
       <div class="content"></div>
     </paper-header-panel>
@@ -209,7 +216,7 @@
 
         <paper-menu id="toc-items">
           <template is="dom-repeat" items="{{tocList}}" index-as="idx">
-            <paper-item step$="{{computedIdx(idx)}}" class$="{{computedTocItem(idx, selectedStep, tocList.length)}}" on-click="stepUpdated">
+            <paper-item step$="{{computedIdx(idx)}}" class$="{{computedTocItem(idx, selectedIdx, tocList.length)}}" on-click="stepUpdatedByToc">
               <i class="toc-number">{{computedIdx(idx)}}</i><span>{{item.step_label}}</span>
             </paper-item>
           </template>
@@ -218,19 +225,19 @@
       </div>
       <div main id="drawerpanel_main">
         
-        <neon-animated-pages id="codelab-pages" class="flex" selected="[[selectedStep]]" entry-animation="[[entryAnimation]]" exit-animation="[[exitAnimation]]">
+        <neon-animated-pages id="codelab-pages" class="flex" selected="[[selectedIdx]]" entry-animation="[[entryAnimation]]" exit-animation="[[exitAnimation]]">
           <content></content>
         </neon-animated-pages>
         
         <div id="drawerpanel_main_footer">
           <span>footer</span>
           <div id="page_control">
-            <div id="prevStep" class="fab backword">
+            <div id="prevStep" class="fab backword" on-click="stepUpdatedByNavIcon"">
               <iron-icon icon="arrow-back"></iron-icon>
               <paper-ripple class="circle" recenters></paper-ripple>
             </div>
-            <div id="nextStep" class="fab forward">
-              <iron-icon icon="arrow-forward"></iron-icon>
+            <div id="nextStep" class="fab forward" on-click="stepUpdatedByNavIcon">
+              <iron-icon id="arrow-forward" icon="arrow-forward"></iron-icon>
               <paper-ripple class="circle" recenters></paper-ripple>
             </div>
           </div>
@@ -277,7 +284,7 @@
               type:Number,
               value:0,
           },
-          selectedStep: {
+          selectedIdx: {
               type:Number,
               value:0,
           },
@@ -301,35 +308,94 @@
       computedIdx: function(idx) {
           return idx+1;
       },
-      computedTocItem: function(idx, selectedStep, length) {
+      computedTocItem: function(idx, selectedIdx, length) {
           var out="";
           if(idx===0) out="toc-item-first ";
           if(idx===length-1) out="toc-item-last ";
-          if(idx<=selectedStep) out+="completed ";
+          if(idx<=selectedIdx) out+="completed ";
           return "toc-item "+out;
       },
-      stepUpdated: function(event) {
+      _prevStep: function(idx) {
+          if (this.selectedIdx - 1 >= 0) {
+              this.entryAnimation = 'slide-from-left-animation';
+              this.exitAnimation = 'slide-right-animation';
+              if(typeof idx=="undefined") {
+                  this.selectedIdx -= 1;
+              } else {
+                  this.selectedIdx = idx;
+              }
+              this.$.drawerpanel_main.scrollTop=0;
+          }
+      },
+      _nextStep: function(idx) {          
+          if (this.selectedIdx + 1 < this.steps.length) {
+              this.entryAnimation = 'slide-from-right-animation';
+              this.exitAnimation = 'slide-left-animation';
+              if(typeof idx=="undefined") {
+                  this.selectedIdx += 1;
+              } else {
+                  this.selectedIdx = idx;
+              } 
+              this.$.drawerpanel_main.scrollTop=0;
+          }
+      },
+      stepUpdatedByToc: function(event) {
           var step=event.target.getAttribute("step");
           if(step==null) {
               step=event.target.parentNode.getAttribute("step");
           }
           var idx=step-1;
           var tocElems=this.querySelector("#toc-items").getElementsByTagName("paper-item");
+
+          this._updateTocCompleted.bind(this)(idx, tocElems);
+          
+          if(this.selectedIdx>idx) {
+              this._prevStep.bind(this)(idx);
+          }
+          if(this.selectedIdx<idx) {
+              this._nextStep.bind(this)(idx);
+          }
+
+          this._updateNavIconCompleted.bind(this)(step, tocElems.length);
+      },
+      stepUpdatedByNavIcon: function(event) {
+          var mode=event.target.id;
+          if(mode=="") {
+              mode=event.target.parentNode.id;
+          }
+          switch(mode) {
+              case "prevStep":
+                  this._prevStep.bind(this)();
+                  break;
+              case "nextStep":
+                  this._nextStep.bind(this)();
+                  break;
+          }
+          var tocElems=this.querySelector("#toc-items").getElementsByTagName("paper-item");
+          this._updateNavIconCompleted.bind(this)(this.selectedIdx+1, tocElems.length);
+      },
+      _updateTocCompleted: function(idx, tocElems) {
           for(var i=0; i<tocElems.length; i++) {
               tocElems[i].className=tocElems[i].className.replace(" completed", "");
               if(i<=idx) {
                   tocElems[i].className=tocElems[i].className+" completed";
               }
           }
-          this.selectedStep=idx;
+      },
+      _updateNavIconCompleted: function(step, tocElems_length) {
+          if(step==tocElems_length) {
+              this.$["arrow-forward"].setAttribute("icon", "done");
+          } else {
+              this.$["arrow-forward"].setAttribute("icon", "arrow-forward");
+          }
+
+          if(step==1) {
+              this.$["prevStep"].style.setProperty("visibility", "hidden");
+          } else {
+              this.$["prevStep"].style.removeProperty("visibility");
+          }
       },
       ready: function(){
-          this.menuItems = [
-            { label: "Pizza0", ordered: 0 },
-            { label: "Pasta1", ordered: 0 },
-            { label: "Toast2", ordered: 0 }
-          ];
-
           //var p=location.pathname.split("/");
           this.codelab_id=this.label.replace(/ /g,"_").toLowerCase();
           document.title = "Codelab: " + this.label;
@@ -353,7 +419,6 @@
               });
           }
           this.tocList=arraySteps;
-          console.log("[tocList] ", this.tocList);
 
           // Set defaults
           this.cookie = this.cookie || '{}';
@@ -361,7 +426,7 @@
           var codelabCookie = JSON.parse(this.cookie)[this.codelab_id];
           if (codelabCookie && codelabCookie.currentStep !== undefined) {
               this.lastStep = codelabCookie.currentStep;
-              if (this.selectedStep != this.lastStep) {
+              if (this.selectedIdx != this.lastStep) {
                   this.$.resume_dialog.toggle();
               }
           }
@@ -371,12 +436,10 @@
           this.setSelectedStepFromHash_ = this.setSelectedStepFromHash.bind(this);
           window.addEventListener('popstate', this.setSelectedStepFromHash_);
 
-          this.selectedStep = 0;
-
-          this.addMenuToDrawer();
-
-          console.log(this.steps, this.totalDuration, this.cookie, this.codelab_id);
-          console.log(this.$["codelab-pages"]);
+          this.selectedIdx=0;
+          var tocElems=this.querySelector("#toc-items").getElementsByTagName("paper-item");
+          this._updateTocCompleted.bind(this)(this.selectedIdx, tocElems);
+          this._updateNavIconCompleted.bind(this)(this.selectedIdx+1, tocElems);
 
       },
       /**
@@ -394,41 +457,14 @@
           var h = parseInt(timeParts[timeParts.length - 3], 10) || 0;
           return s + 60 * m + 60*60 * h;
       },
-      addMenuToDrawer: function() {
-          var section=document.createElement("section");
-          section.setAttribute("id", "drawer_menu");
-          for(var i=0; i<this.steps.length; i++) {
-              var elem=document.createElement("paper-item");
-              elem.setAttribute("label", i+1);
-              elem.className="toc-item ";
-              if(i==0) elem.className+="toc-item-first ";
-              if(i==this.steps.length-1) elem.className+="toc-item-last ";
-              elem.setAttribute("tabindex", 0);
-              elem.setAttribute("role", "listitem");
-              elem.setAttribute("on-click", "{{ changeStep }}");
-              elem.className+="style-scope codelab-pack ";
-
-              var ielem=document.createElement("i");
-              ielem.className="toc-number ";
-              ielem.className+="style-scope codelab-pack ";
-              ielem.innerHTML=i+1;
-              elem.appendChild(ielem);
-
-              var span=document.createElement("span")
-              span.innerText=this.steps[i].label;
-              elem.appendChild(span);
-
-              //this.$["drawerpanel_drawer"].appendChild(elem);
-          }
-      },
       changeStep: function(event) {
           console.log(event.target);
       },
       setSelectedStepFromHash: function() {
         var stepFromHash = window.location.hash ?
             parseInt(window.location.hash.replace('#', '')) : 1;
-        if (stepFromHash != this.selectedStep) {
-          this.selectedStep = stepFromHash;
+        if (stepFromHash != this.selectedIdx) {
+          this.selectedIdx = stepFromHash;
         }
       },
       handleKeyShortcuts: function(e) {
@@ -443,20 +479,20 @@
             break;
         }
       },
-      selectedStepChanged: function(oldVal, newVal) {
-          this.selectedStep = parseInt(this.selectedStep, 10);
+      selectedIdxChanged: function(oldVal, newVal) {
+          this.selectedIdx = parseInt(this.selectedIdx, 10);
           this.updateStepUI();
           // Update cookie.
           this.setLastLocation();
           // Update hash.
-          window.location.hash = '#' + this.selectedStep;
+          window.location.hash = '#' + this.selectedIdx;
           // Track analytics.
           this.tracking();
       },
       setLastLocation: function() {
           var cookie = JSON.parse(this.cookie);
           cookie[this.codelab_id] = {
-              currentStep: this.selectedStep
+              currentStep: this.selectedIdx
           };
           this.cookie = JSON.stringify(cookie);
       },
@@ -466,10 +502,10 @@
           if (items.length) {
               var completed = true;
 /*
-              for (var i = 0; i < this.selectedStep - 1; i++) {
+              for (var i = 0; i < this.selectedIdx - 1; i++) {
                   items[i].classList.add('completed');
               }
-              for (var i = this.selectedStep - 1; i < items.length; i++) {
+              for (var i = this.selectedIdx - 1; i < items.length; i++) {
                   items[i].classList.remove('completed');
               }
 */
@@ -477,7 +513,7 @@
 /*
           // Update step view.
           this.$.pages.scrollIntoView(true);
-          this.steps[this.selectedStep - 1].scrollIntoView(true);
+          this.steps[this.selectedIdx - 1].scrollIntoView(true);
           // Update progress bar.
           this.updateProgress();
 */
@@ -494,13 +530,14 @@
                   this.mode = (event.target.scrollTop > 0) ? 'standard' : 'seamed';
               }.bind(this));
               
+/*
               this.$["nextStep"].addEventListener("click", function(event){
                   this.nextStep();
               }.bind(this));
               this.$["prevStep"].addEventListener("click", function(event){
                   this.prevStep();
               }.bind(this));
-
+*/
 
               this.$["menu_button"].addEventListener("click", function(event) {
                   this.$["paperDrawerPanel"].togglePanel();
@@ -556,23 +593,7 @@
         document.removeEventListener('keydown', this.handleKeyShortcuts_);
       },
       highlightSnippets: function() {
-          this.steps[this.selectedStep - 1].highlight();
-      },
-      prevStep: function() {
-          if (this.selectedStep - 1 >= 0) {
-              this.entryAnimation = 'slide-from-left-animation';
-              this.exitAnimation = 'slide-right-animation';
-              this.selectedStep -= 1;
-              this.$.drawerpanel_main.scrollTop=0;
-          }
-      },
-      nextStep: function() {
-        if (this.selectedStep + 1 < this.steps.length) {
-              this.entryAnimation = 'slide-from-right-animation';
-              this.exitAnimation = 'slide-left-animation';
-              this.selectedStep += 1;
-              this.$.drawerpanel_main.scrollTop=0;
-          }
+          this.steps[this.selectedIdx - 1].highlight();
       },
   });
   </script>

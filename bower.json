@@ -1,7 +1,7 @@
 {
-  "name": "codelab-template",
+  "name": "codelab-skeleton",
   "version": "0.0.1",
-  "description": "template for codelab",
+  "description": "skeleton for codelab",
   "authors": [
     "Ryoya Kawai"
   ],
@@ -24,7 +24,9 @@
     "paper-item": "polymerelements/paper-item#~1.0.1",
     "paper-ripple": "polymerelements/paper-ripple#~1.0.1",
     "iron-icons": "polymerelements/iron-icons#~1.0.3",
-    "polymer": "~1.0.6"
+    "polymer": "~1.0.6",
+    "paper-progress": "PolymerElements/paper-progress#~1.0.1",
+    "iron-selector": "PolymerElements/iron-selector#~1.0.2"
   },
   "devDependencies": {}
 }
