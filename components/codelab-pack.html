@@ -1,15 +1,14 @@
 <dom-module id="codelab-pack">
   <style is="custom-style">
+  @import url('https://fonts.googleapis.com/css?family=Roboto:100,200,400,300,300italic,700,500|Source+Code+Pro:400,700');
   @media (max-width: 800px) {
     paper-toolbar {
       height: 64px;
     }
   }
-
   #paperDrawerPanel {
     top:60px;
   }
-
   #drawerpanel_main_footer {
     width:95%;
     text-align:center;
@@ -17,7 +16,9 @@
     padding:10px 10px 10px 30px;
     margin:10px auto;
   }
-
+  #drawerpanel_drawer {
+    overflow: auto;
+  }
   #paperDrawerPanel [main] {
     background-color: var(--google-grey-100);
     padding:20px;
@@ -57,24 +58,51 @@
     transition: 0.2s;
     vertical-align:middle;
   }
-  div.title {
-    position: absolute;
-    top:0px;
-    width:80%;
-    display:inline;
-    font-size:1.4em;
-    font-weight: 300;
-    padding-left:0;
-    padding: 2px 0;
-    color: white;
-    margin:0 0 0 12px;
-    transition:1.5s;
-    white-space:nowrap;
+
+  html, body {
+    box-sizing: border-box;
+    height: 100%;
+  }
+  body {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: flex;
+    -webkit-justify-content: center;
+    -moz-justify-content: center;
+    -ms-justify-content: center;
+    justify-content: center;
+    font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial;
+    font-weight: 400;
+    margin: 0;
+    font-size: 16px;
+    line-height: 24px;
+    -moz-osx-font-smoothing: grayscae;
+    -webkit-font-smoothing: antialiased;
+    -moz-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+
+    /*background: url(/static/img/colorbar.png) repeat-x 50% 100%,
+    url(/static/img/iowall_1920x1440.png) no-repeat 51% 0%;
+    background-size: 100% 5px, cover;*/
+    /*background: url(/static/img/colorbar.png) repeat-x 50% 100%;*/
+    /*background-size: 100% 5px;*/
+    background-color: #f1f1f3;
   }
   #menu_button {
+    display:inline-block;
+    position:relative;
     padding:0px 5px;
     border-style:none;
+    outline:none;
     transition:1.0s;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor:pointer;
+    z-index:0;
   }
   #menu_button:focus {
     outline:none;
@@ -82,15 +110,6 @@
   #menu_button:hover {
     cursor:pointer;
   }    
-  .icon-right {
-    position:absolute;
-    top:0px; right:0px;
-    width:70px; height:40px; 
-    margin: 12px 0px 0px 0px;
-    padding:0px 5px;
-    z-index:2;
-    background-color:rgba(66, 133, 244, 0.8);
-  }
   .horizontal-section {
     padding: 0 !important;
   }
@@ -134,6 +153,71 @@
   .fab > iron-icon::shadow path {
     fill: #fff;
   }
+  /* counter */
+  #countdown {
+    position: absolute;
+    right: 2.4em;
+    top: 0.8em;
+    font-size: 0.65em;
+    color: white;
+    font-weight: 300;
+    border-radius: 40px;
+    width: 40px;
+    text-align: center;
+    height: 40px; }
+
+  #countdown svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    webkit-transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    transform: rotate(-90deg); }
+
+  #countdown strong {
+    display: block;
+    font-size: 0.9em;
+    padding-top: 0px;
+    line-height: 28px;
+  }
+
+  #countdown strong:first-of-type {
+    font-weight: 500;
+    font-size: 1.4em;
+    line-height: 2px;
+    padding-top: 12px;
+    margin: 0; }
+
+  #countdown_progress {
+    stroke-dasharray: 113; }
+
+  paper-progress {
+    width: 100%;
+    position: relative;
+    top: 4px;
+    z-index: -1; }
+
+  #progress {
+    position: absolute;
+    width: 100%;
+    top: inherit;
+    bottom: 0;
+    left: 0;
+    z-index: 0;
+    display:none;
+ }
+
+  #progress /deep/ #progressContainer {
+    background-color: rgba(255, 255, 255, 0.2); }
+
+  #progress /deep/ #activeProgress {
+    /*background: rgb(13, 168, 97);*/
+    /*background-color: #00B95F;*/
+    /*background-color: #1D5CBD;*/
+    /*background-color: #A8BEE0;*/
+    background-color: rgba(255, 255, 255, 0.5); }
+
   /* ToC */
   .toc-item {
     font-size: 14px;
@@ -177,35 +261,64 @@
     border-color: #00BCD4; }
   .toc-item.toc-item-first i::before,
   .toc-item.toc-item-last i::after {
-    display: none;}
+    display: none;
+  }
   paper-menu {
     background-color:#f5f5f5;
+   
   }
   paper-item {
     cursor:pointer;
     border-style:none;
     outline:0px none black;
   }
+  paper-item.selected {
+    background-color:#DDDDDD;
+  }
+  paper-header-panel h1 {
+    position: relative;
+    font-size: 1.4em;
+    font-weight: 300;
+    line-height: 1em;
+    padding-left: 0;
+    padding: 2px 0;
+    color: white;
+    margin: 0.67em 67px 0.67em 12px; }
+  paper-header-panel h1.title{
+    position: absolute;
+    top:0px;
+    width:80%;
+    display:inline;
+    font-size:1.4em;
+    font-weight: 300;
+    padding-left:0;
+    padding: 2px 0;
+    color: white;
+    margin:18px 0 0 12px;
+    transition:1.5s;
+    white-space:nowrap;
+  },
+  paper-header-panel h1 strong {
+    font-weight: 400;
+    color: white; }
 
   </style>
   <template>
     <paper-header-panel mode="{{mode}}" class="blue">
       <div class="paper-header">
         <iron-icon id="menu_button" icon="menu" noink="" on-click="toggleMenu" role="button" tabindex="0" aria-label="menu"></iron-icon>
-        <div id="title" class="title"></div>
-        <div class="icon-right">
+        <h1 id="title" class="title" flex></h1>
+        <div>
           <div id="countdown" title="Time remaining" hidden?="{{duration == 0}}">
             <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
               <g>
                 <circle r="18" cy="20" cx="20" stroke-width="2" stroke="rgba(255,255,255,0.2)" fill="none"/>
-                <circle id="countdown_progress" r="18" cy="20" cx="20" stroke-width="2" stroke="rgba(255,255,255,0.6)" fill="none"/>
+                <circle id="countdown_progress" r="18" cy="20" cx="20" stroke-width="2" stroke="rgba(255,255,255,0.6)" fill="none" stroke-dashoffset="48.42857142857142"/>
               </g>
             </svg>
-            <strong>{{ duration/60 | roundUp }}</strong>
+            <strong>{{computedDuration(duration)}}</strong>
             <strong>mins</strong>
           </div>
-          <paper-progress id="progress" value="0" min="0" max="1"
-                          hidden?="{{totalDuration != 0 || progress == 0 || progress == 1}}"></paper-progress>
         </div>
       </div>
       </div>
@@ -315,6 +428,21 @@
           if(idx<=selectedIdx) out+="completed ";
           return "toc-item "+out;
       },
+      computedDuration: function(duration) {
+          return this._roundUp(duration/60);
+      },
+      _roundUp: function(value) {
+        return Math.ceil(value);
+      },
+      updateTocSelected: function() {
+          var idx=this.selectedIdx;
+          var tocItems=Array.prototype.slice.call(this.getElementsByTagName("paper-item"));
+          for(var i=0; i<tocItems.length; i++) {
+              tocItems[i].className=tocItems[i].className.replace(" selected", "");
+              tocItems[i].className=tocItems[i].className.replace(" iron-selected", "");
+              if(i==idx) tocItems[i].className+=" selected iron-selected";
+          }
+      },
       _prevStep: function(idx) {
           if (this.selectedIdx - 1 >= 0) {
               this.entryAnimation = 'slide-from-left-animation';
@@ -326,6 +454,7 @@
               }
               this.$.drawerpanel_main.scrollTop=0;
           }
+          this.updateProgress();
       },
       _nextStep: function(idx) {          
           if (this.selectedIdx + 1 < this.steps.length) {
@@ -338,6 +467,7 @@
               } 
               this.$.drawerpanel_main.scrollTop=0;
           }
+          this.updateProgress();
       },
       stepUpdatedByToc: function(event) {
           var step=event.target.getAttribute("step");
@@ -357,6 +487,7 @@
           }
 
           this._updateNavIconCompleted.bind(this)(step, tocElems.length);
+          this.updateTocSelected();
       },
       stepUpdatedByNavIcon: function(event) {
           var mode=event.target.id;
@@ -373,6 +504,7 @@
           }
           var tocElems=this.querySelector("#toc-items").getElementsByTagName("paper-item");
           this._updateNavIconCompleted.bind(this)(this.selectedIdx+1, tocElems.length);
+          this.updateTocSelected();
       },
       _updateTocCompleted: function(idx, tocElems) {
           for(var i=0; i<tocElems.length; i++) {
@@ -395,13 +527,22 @@
               this.$["prevStep"].style.removeProperty("visibility");
           }
       },
+      updateProgress: function() {
+          if (this.totalDuration) {
+              this.duration = this.totalDuration - this.steps[this.selectedIdx].timeToStart;
+              this.$.countdown_progress.setAttribute(
+                  'stroke-dashoffset', (this.totalDuration - this.duration)/this.totalDuration * 113);
+          } else {
+              this.progress = (this.selectedIdx) / (this.steps.length - 1);
+              this.$.progress.value = this.progress;
+          }
+      },
       ready: function(){
           //var p=location.pathname.split("/");
           this.codelab_id=this.label.replace(/ /g,"_").toLowerCase();
           document.title = "Codelab: " + this.label;
-          this.$["title"].innerText = this.label;
+          this.$["title"].innerHTML = this.label;
           this.steps = this.querySelectorAll('codelab-article');
-
           var arraySteps=[];
           for (var i=0; i<this.steps.length; i++) {
               this.steps[i].step=i;
@@ -471,17 +612,16 @@
         switch(e.keyCode) {
           case 33: // PAGE_UP
           case 37: // LEFT
-            this.prevStep();
+            this._prevStep.bind(this)();
             break;
           case 34: // PAGE_DOWN
           case 39: // RIGHT
-            this.nextStep();
+            this._nextStep.bind(this)();
             break;
         }
       },
       selectedIdxChanged: function(oldVal, newVal) {
           this.selectedIdx = parseInt(this.selectedIdx, 10);
-          this.updateStepUI();
           // Update cookie.
           this.setLastLocation();
           // Update hash.
@@ -496,51 +636,17 @@
           };
           this.cookie = JSON.stringify(cookie);
       },
-      updateStepUI: function() {
-          // Update ToC.
-          var items = this.$["toc-items"].querySelectorAll('.toc-item');
-          if (items.length) {
-              var completed = true;
-/*
-              for (var i = 0; i < this.selectedIdx - 1; i++) {
-                  items[i].classList.add('completed');
-              }
-              for (var i = this.selectedIdx - 1; i < items.length; i++) {
-                  items[i].classList.remove('completed');
-              }
-*/
-          }
-/*
-          // Update step view.
-          this.$.pages.scrollIntoView(true);
-          this.steps[this.selectedIdx - 1].scrollIntoView(true);
-          // Update progress bar.
-          this.updateProgress();
-*/
+      toggleMenu: function() {
+          this.$["paperDrawerPanel"].togglePanel();
       },
       attached: function() {
           this.async(function() { // used be a domReady
-              this.updateStepUI();
-
               this.$.drawerpanel_main.addEventListener('scroll', function(event) {
                   this.mode = (event.target.scrollTop > 0) ? 'standard' : 'seamed';
               }.bind(this));
               
               this.$.drawerpanel_drawer.addEventListener('scroll', function(event) {
                   this.mode = (event.target.scrollTop > 0) ? 'standard' : 'seamed';
-              }.bind(this));
-              
-/*
-              this.$["nextStep"].addEventListener("click", function(event){
-                  this.nextStep();
-              }.bind(this));
-              this.$["prevStep"].addEventListener("click", function(event){
-                  this.prevStep();
-              }.bind(this));
-*/
-
-              this.$["menu_button"].addEventListener("click", function(event) {
-                  this.$["paperDrawerPanel"].togglePanel();
               }.bind(this));
 
               this.$["paperDrawerPanel"].addEventListener("paper-responsive-change", function(event) {
@@ -550,6 +656,7 @@
                       this.$["menu_button"].style.setProperty("width", "0px");
                   }
               }.bind(this));
+
 
               checkResponsiveState.bind(this)(document.getElementById("paperDrawerPanel"));
               window.addEventListener("paper-responsive-change", function(event){
@@ -584,8 +691,17 @@
                   this.$["drawerpanel_drawer"].style.setProperty("height", parseInt(window.innerHeight)-80+offset + "px");
               }
               
+              // scroll bar in drawer for windows chrome 
+              this.$["drawerpanel_drawer"].style.setProperty("overflow-x", "hidden");
+              this.$["drawerpanel_drawer"].style.setProperty("overflow-y", "auto");
+              
               this.$["paperDrawerPanel"].fire("paper-responsive-change");
 
+              this.updateProgress.bind(this)();  // initialize progress
+              var self=this;
+              setTimeout(function(){
+                  this.updateTocSelected.bind(this)();  // initialize toc backcolor
+              }.bind(this), 10);
           });
       },
       detached: function() {
