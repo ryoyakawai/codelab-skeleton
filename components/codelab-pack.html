@@ -9,13 +9,6 @@
   #paperDrawerPanel {
     top:60px;
   }
-  #drawerpanel_main_footer {
-    width:95%;
-    text-align:center;
-    height:100px;
-    padding:10px 10px 10px 30px;
-    margin:10px auto;
-  }
   #drawerpanel_drawer {
     overflow: auto;
   }
@@ -32,6 +25,14 @@
     overflow-x: hidden;
     overflow-y: scroll;
   }
+
+  table code,
+  h2 code,
+  h3 code,
+  h4 code {
+    line-height: inherit;
+    padding: inherit;
+    background: none; }
 
   paper-button {
     color: white;
@@ -156,7 +157,7 @@
   /* counter */
   #countdown {
     position: absolute;
-    right: 2.4em;
+    right: 2.8em;
     top: 0.8em;
     font-size: 0.65em;
     color: white;
@@ -302,6 +303,10 @@
     font-weight: 400;
     color: white; }
 
+  ::content {
+    line-height: 24px;
+    /* Code snippets */
+  }
   </style>
   <template>
     <paper-header-panel mode="{{mode}}" class="blue">
@@ -339,22 +344,20 @@
       <div main id="drawerpanel_main">
         
         <neon-animated-pages id="codelab-pages" class="flex" selected="[[selectedIdx]]" entry-animation="[[entryAnimation]]" exit-animation="[[exitAnimation]]">
-          <content></content>
+          <content></content>        
         </neon-animated-pages>
-        
-        <div id="drawerpanel_main_footer">
-          <span>footer</span>
-          <div id="page_control">
-            <div id="prevStep" class="fab backword" on-click="stepUpdatedByNavIcon"">
-              <iron-icon icon="arrow-back"></iron-icon>
-              <paper-ripple class="circle" recenters></paper-ripple>
-            </div>
-            <div id="nextStep" class="fab forward" on-click="stepUpdatedByNavIcon">
-              <iron-icon id="arrow-forward" icon="arrow-forward"></iron-icon>
-              <paper-ripple class="circle" recenters></paper-ripple>
-            </div>
+
+        <div id="page_control">
+          <div id="prevStep" class="fab backword" on-click="stepUpdatedByNavIcon"">
+            <iron-icon icon="arrow-back"></iron-icon>
+            <paper-ripple class="circle" recenters></paper-ripple>
+          </div>
+          <div id="nextStep" class="fab forward" on-click="stepUpdatedByNavIcon">
+            <iron-icon id="arrow-forward" icon="arrow-forward"></iron-icon>
+            <paper-ripple class="circle" recenters></paper-ripple>
           </div>
         </div>
+
     </paper-drawer-panel>
   </template>
   <script>
@@ -438,10 +441,15 @@
           var idx=this.selectedIdx;
           var tocItems=Array.prototype.slice.call(this.getElementsByTagName("paper-item"));
           for(var i=0; i<tocItems.length; i++) {
+              tocItems[i].removeAttribute("selected");
               tocItems[i].className=tocItems[i].className.replace(" selected", "");
               tocItems[i].className=tocItems[i].className.replace(" iron-selected", "");
               if(i==idx) tocItems[i].className+=" selected iron-selected";
           }
+      },
+      highlightSnippets: function() {
+          //console.log(this.steps[this.selectedIdx]);
+          this.steps[this.selectedIdx].highlight();
       },
       _prevStep: function(idx) {
           if (this.selectedIdx - 1 >= 0) {
@@ -455,6 +463,7 @@
               this.$.drawerpanel_main.scrollTop=0;
           }
           this.updateProgress();
+          return {"step":this.selectedIdx+1, "length": this.steps.length};
       },
       _nextStep: function(idx) {          
           if (this.selectedIdx + 1 < this.steps.length) {
@@ -468,6 +477,7 @@
               this.$.drawerpanel_main.scrollTop=0;
           }
           this.updateProgress();
+          return {"step":this.selectedIdx+1, "length": this.steps.length};
       },
       stepUpdatedByToc: function(event) {
           var step=event.target.getAttribute("step");
@@ -545,7 +555,7 @@
           this.steps = this.querySelectorAll('codelab-article');
           var arraySteps=[];
           for (var i=0; i<this.steps.length; i++) {
-              this.steps[i].step=i;
+              this.steps[i].step=i+1;
               this.steps[i].label=this.label;
               this.steps[i].step_label=this.steps[i].getAttribute('step_label');
               this.steps[i].feedback_link = this.feedback_link;
@@ -612,13 +622,16 @@
         switch(e.keyCode) {
           case 33: // PAGE_UP
           case 37: // LEFT
-            this._prevStep.bind(this)();
+            var retVal=this._prevStep.bind(this)();
+            this._updateNavIconCompleted.bind(this)(retVal.step, retVal.length);
             break;
           case 34: // PAGE_DOWN
           case 39: // RIGHT
-            this._nextStep.bind(this)();
+            var retVal=this._nextStep.bind(this)();
+            this._updateNavIconCompleted.bind(this)(retVal.step, retVal.length);
             break;
         }
+        this.updateTocSelected();
       },
       selectedIdxChanged: function(oldVal, newVal) {
           this.selectedIdx = parseInt(this.selectedIdx, 10);
@@ -658,6 +671,10 @@
               }.bind(this));
 
 
+//              this.$["codelab-pages"]._onNeonAnimationFinish=function(event){
+//                  console.log(event);
+//              }.bind(this);
+  
               checkResponsiveState.bind(this)(document.getElementById("paperDrawerPanel"));
               window.addEventListener("paper-responsive-change", function(event){
                   var elem=event.target;
@@ -682,13 +699,14 @@
               var event = new CustomEvent("paper-responsive-change", {detail:elem});
               elem.dispatchEvent(event);
 
-              // adjusting content_inner_size                                                                                                                                    
+              // adjusting content_inner_size                                                                                                                                 
               adjustContentInnerSize.bind(this)(0);
               window.onresize=adjustContentInnerSize.bind(this);
               function adjustContentInnerSize(offset) {
-                  if(typeof offset=="undefined") offset=0;
+                  (typeof offset, offset);
+                  if(typeof offset!=="number") offset=0;
                   this.$["drawerpanel_main"].style.setProperty("height", parseInt(window.innerHeight)-80+offset + "px");
-                  this.$["drawerpanel_drawer"].style.setProperty("height", parseInt(window.innerHeight)-80+offset + "px");
+                  this.$["drawerpanel_drawer"].style.setProperty("height", parseInt(window.innerHeight)-183+offset + "px");
               }
               
               // scroll bar in drawer for windows chrome 
@@ -698,19 +716,23 @@
               this.$["paperDrawerPanel"].fire("paper-responsive-change");
 
               this.updateProgress.bind(this)();  // initialize progress
-              var self=this;
               setTimeout(function(){
                   this.updateTocSelected.bind(this)();  // initialize toc backcolor
               }.bind(this), 10);
+              
+              this.$["codelab-pages"].addEventListener("neon-animation-finish", function(){
+                  this.highlightSnippets.bind(this)();
+              }.bind(this));
+
+              // initializing snippet
+              this.highlightSnippets.bind(this)();
+
           });
       },
       detached: function() {
         //window.removeEventListener('popstate', this.setSelectedStepFromHash_);
         document.removeEventListener('keydown', this.handleKeyShortcuts_);
-      },
-      highlightSnippets: function() {
-          this.steps[this.selectedIdx - 1].highlight();
-      },
+      }
   });
   </script>
 </dom-module>

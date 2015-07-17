@@ -41,24 +41,51 @@
     overflow-x: hidden;
     overflow-y: auto;
   }
-
   #drawerpanel_main_inner {
     background-color:#fff;
     padding:25px 20px 25px 20px;
   }
-  </style>
-  
+  ::content pre, ::content code {
+    border-radius: 3px;
+    font-family: 'Source Code Pro', Helvetica, Arial;
+    overflow-x: auto; }
+  ::content code {
+    font-weight:300;
+    border-radius: 2px;
+    line-height: 1.5em;
+    background-color: rgba(0, 0, 0, 0.07); }
+  ::content pre {
+    padding: 0px 16px 16px 16px;
+    background: #222;
+    line-height: 1.5em;
+    font-size: 12px;
+    color: #ccc; }
+  .drawerpanel_main_footer {
+    width:95%;
+    text-align:center;
+    height:200px;
+    padding:10px 10px 10px 30px;
+    margin:10px auto;
+    color:#777;
+  }
+</style>
   <template>
+
+
     <neon-animatable id="neon-animatable">
       <paper-material id="tutorial_contents" elevation="1">
         <div id="drawerpanel_main_outer">
           <div id="drawerpanel_main_inner">
-            <h2 id="step_label"></h2>
+            <h2 id="step_label">{{step_label}}</h2>
             <content></content>
           </div>
         </div>
       </paper-material>
     </neon-animatable>
+    <div class="drawerpanel_main_footer">
+        <span id="footer_message"></span>
+    </div>
+
   </template>
 
   <script>
@@ -68,11 +95,39 @@
         step_label: {
           type: String,
           value: ""
-        }
-
+        },
+        feedback_link: {
+          type: String,
+          value: ""
+        },
       },
       ready: function() {
-          this.$["step_label"].innerText=this.step_label;
+          var code_sections = this.querySelectorAll('code');
+          for (var i=0; i<code_sections.length; i++) {
+              var raw_code = code_sections[i].innerHTML;
+              var highlighted_code = raw_code;
+              var lang = code_sections[i].getAttribute('language');
+              if (lang) {
+                  raw_code = raw_code.replace(/&lt;/g,'<');
+                  raw_code = raw_code.replace(/&gt;/g,'>');
+                  raw_code = raw_code.replace(/&amp;/g,'&');
+                  highlighted_code = hljs.highlight(lang, raw_code).value;
+                  code_sections[i].innerHTML = '<pre>' + highlighted_code + '</pre>';
+              }
+          }
+
+          this.$["step_label"].innerHTML=this.step+". "+this.step_label;
+          var span=document.createElement("span");
+          span.innerHTML="Did you find a mistake in this codelab? ";
+          var href1=document.createElement("a");
+          href1.href=this.feedback_link;
+          href1.innerHTML="file a bug.";
+          this.$["footer_message"].appendChild(span);
+          this.$["footer_message"].appendChild(href1);
+ 
+         this.$["feedback_link"]=this.feedback_link;
+          console.log(this.feedback_link);
+
           window.addEventListener("paper-responsive-change", function(event){
               var elem=event.target;
               checkResponsiveStatus.bind(this)(elem);
@@ -95,8 +150,15 @@
           } else {
               this.$["neon-animatable"].style.setProperty("margin", "0px 10px");
           }
+      },
+      highlight: function() {
+          // Highlight code snippets.
+          var snippets = this.querySelectorAll('codelab-snippet');
+          for (var i = 0, snippet; snippet = snippets[i]; i++) {
+              snippet.highlight();
+          }
       }
 
-    });
+  });
   </script>
 </dom-module>
