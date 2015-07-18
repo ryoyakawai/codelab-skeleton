@@ -140,7 +140,7 @@
   }
   .fab.backword {
     position:fixed;
-    margin-left:30px;
+    margin-left:35px;
     bottom:25px;
     background-color: #999;
   }
@@ -653,15 +653,20 @@
       toggleMenu: function() {
           this.$["paperDrawerPanel"].togglePanel();
       },
+      _updateStandardSeamed: function() {
+          this.mode = (event.target.scrollTop > 0) ? 'standard' : 'seamed';
+      },
+      _adjustContentInnerSize: function(offset) {
+          (typeof offset, offset);
+          if(typeof offset!=="number") offset=0;
+          if(this.$["paperDrawerPanel"].narrow==true) offset+=20;
+          this.$["drawerpanel_main"].style.setProperty("height", parseInt(window.innerHeight)-80+offset + "px");
+          this.$["drawerpanel_drawer"].style.setProperty("height", parseInt(window.innerHeight)-183+offset + "px");
+      },
       attached: function() {
           this.async(function() { // used be a domReady
-              this.$.drawerpanel_main.addEventListener('scroll', function(event) {
-                  this.mode = (event.target.scrollTop > 0) ? 'standard' : 'seamed';
-              }.bind(this));
-              
-              this.$.drawerpanel_drawer.addEventListener('scroll', function(event) {
-                  this.mode = (event.target.scrollTop > 0) ? 'standard' : 'seamed';
-              }.bind(this));
+              this.$["drawerpanel_main"].addEventListener('scroll', this._updateStandardSeamed.bind(this));
+              this.$["drawerpanel_drawer"].addEventListener('scroll', this._updateStandardSeamed.bind(this));
 
               this.$["paperDrawerPanel"].addEventListener("paper-responsive-change", function(event) {
                   if(event.detail.narrow==true) {
@@ -671,10 +676,6 @@
                   }
               }.bind(this));
 
-
-//              this.$["codelab-pages"]._onNeonAnimationFinish=function(event){
-//                  console.log(event);
-//              }.bind(this);
   
               checkResponsiveState.bind(this)(document.getElementById("paperDrawerPanel"));
               window.addEventListener("paper-responsive-change", function(event){
@@ -683,13 +684,13 @@
               }.bind(this));
               function checkResponsiveState(elem) {
                   if(elem.hasAttribute("narrow")==true) {
-                      this.$["prevStep"].style.setProperty("left", "10px");
+                      this.$["prevStep"].style.setProperty("margin-left", "15px");
                       this.$["nextStep"].style.setProperty("right", "10px");
                       this.$["drawerpanel_main"].style.setProperty("padding", "0");
                       this.$["menu_button"].style.setProperty("width", "24px");
                   } else {
-                      this.$["prevStep"].style.removeProperty("left");
-                      this.$["nextStep"].style.setProperty("right", "40px");
+                      this.$["prevStep"].style.setProperty("margin-left", "35px");
+                      this.$["nextStep"].style.setProperty("right", "45px");
                       this.$["drawerpanel_main"].style.setProperty("padding", "10px 10px 10px 10px");
                       this.$["menu_button"].style.setProperty("width", "0px");
                   }
@@ -701,14 +702,8 @@
               elem.dispatchEvent(event);
 
               // adjusting content_inner_size                                                                                                                                 
-              adjustContentInnerSize.bind(this)(0);
-              window.onresize=adjustContentInnerSize.bind(this);
-              function adjustContentInnerSize(offset) {
-                  (typeof offset, offset);
-                  if(typeof offset!=="number") offset=0;
-                  this.$["drawerpanel_main"].style.setProperty("height", parseInt(window.innerHeight)-80+offset + "px");
-                  this.$["drawerpanel_drawer"].style.setProperty("height", parseInt(window.innerHeight)-183+offset + "px");
-              }
+              this._adjustContentInnerSize.bind(this)(0);
+              window.onresize=this._adjustContentInnerSize.bind(this);
               
               // scroll bar in drawer for windows chrome 
               this.$["drawerpanel_drawer"].style.setProperty("overflow-x", "hidden");
