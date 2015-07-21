@@ -31,7 +31,8 @@
   h2 {
     font-size:30px;
     font-weight:500;
-    margin:0px 0px;
+    margin:0px;
+    padding:0px;
   }
   #neon-animatable {
     margin:0px 10px;
@@ -68,9 +69,12 @@
     margin:10px auto;
     color:#777;
   }
+  #tutorial_contents {
+    max-width:800px;
+    min-width:544px;
+  }
 </style>
   <template>
-
 
     <neon-animatable id="neon-animatable">
       <paper-material id="tutorial_contents" elevation="1">
@@ -83,7 +87,7 @@
       </paper-material>
     </neon-animatable>
     <div class="drawerpanel_main_footer">
-        <span id="footer_message"></span>
+      <span id="footer_message"></span>
     </div>
 
   </template>

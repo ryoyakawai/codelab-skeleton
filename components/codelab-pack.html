@@ -310,6 +310,7 @@
   }
   </style>
   <template>
+    <polymer-cookie name="codelabs" id="cookie" value$="{{cookie}}"></polymer-cookie>
     <paper-header-panel mode="{{mode}}" class="blue">
       <div class="paper-header">
         <iron-icon id="menu_button" icon="menu" noink="" on-click="toggleMenu" role="button" tabindex="0" aria-label="menu"></iron-icon>
@@ -330,6 +331,7 @@
       </div>
       <div class="content"></div>
     </paper-header-panel>
+
     <paper-drawer-panel id="paperDrawerPanel" drawer-width="256px" responsive-width="800px" transition>
       <div drawer id="drawerpanel_drawer">
 
@@ -405,10 +407,6 @@
               type:Number,
               value:0,
           },
-          cookie: {
-              type:String,
-              value:"{}",
-          },
           steps: {
               type:Array,
               value:[],
@@ -464,6 +462,7 @@
               this.$.drawerpanel_main.scrollTop=0;
           }
           this.updateProgress();
+          this.setLastLocation();
           return {"step":this.selectedIdx+1, "length": this.steps.length};
       },
       _nextStep: function(idx) {          
@@ -478,6 +477,7 @@
               this.$.drawerpanel_main.scrollTop=0;
           }
           this.updateProgress();
+          this.setLastLocation();
           return {"step":this.selectedIdx+1, "length": this.steps.length};
       },
       stepUpdatedByToc: function(event) {
@@ -485,6 +485,12 @@
           if(step==null) {
               step=event.target.parentNode.getAttribute("step");
           }
+          this._stepUpdatedByStepNo(step);
+      },
+      stepUpdatedByCookie: function(step) {
+          this._stepUpdatedByStepNo(step);
+      },
+      _stepUpdatedByStepNo: function(step) {
           var idx=step-1;
           var tocElems=this.querySelector("#toc-items").getElementsByTagName("paper-item");
 
@@ -540,7 +546,11 @@
       },
       updateProgress: function() {
           if (this.totalDuration) {
-              this.duration = this.totalDuration - this.steps[this.selectedIdx].timeToStart;
+              this_duration=0;
+              if(this.selectedIdx>0) {
+                  this_duration=this.steps[parseInt(this.selectedIdx)-1].timeToStart;
+              }
+              this.duration = this.totalDuration - this_duration;
               this.$.countdown_progress.setAttribute(
                   'stroke-dashoffset', (this.totalDuration - this.duration)/this.totalDuration * 113);
           } else {
@@ -561,8 +571,8 @@
               this.steps[i].step_label=this.steps[i].getAttribute('step_label');
               this.steps[i].feedback_link = this.feedback_link;
               var parsedDuration = this.parseTime(this.steps[i].getAttribute('duration'));
-              this.steps[i].timeToStart = this.totalDuration;
               this.totalDuration += parsedDuration;
+              this.steps[i].timeToStart = this.totalDuration;
               arraySteps.push({
                   "steps":i, "label":this.steps[i].label, 
                   "step_label": this.steps[i].step_label, 
@@ -649,6 +659,7 @@
               currentStep: this.selectedIdx
           };
           this.cookie = JSON.stringify(cookie);
+          this.$["cookie"].valueUpdated();
       },
       toggleMenu: function() {
           this.$["paperDrawerPanel"].togglePanel();
@@ -723,6 +734,11 @@
               // initializing snippet
               this.highlightSnippets.bind(this)();
 
+              // reproduce last step
+              var lastStep=this.$["cookie"].getSavedCookie(this.codelab_id);
+              if(lastStep.value<=1) this.selectedIdx=parseInt(lastStep.value, 10);
+              this.stepUpdatedByCookie(parseInt(lastStep.value)+1);
+              
           });
       },
       detached: function() {

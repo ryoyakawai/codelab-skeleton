@@ -14,3 +14,22 @@ section > div {
   padding: 14px;
   font-size: 16px;
 }
+
+.middle {
+  vertical-align:middle;
+  margin-right:5px;
+}
+
+h2, h3, h4{
+  margin-bottom:5px
+}
+h4 {
+  margin-top:8px;
+}
+p.top, ul.top {
+  margin-top:5px;
+}
+
+div.indent15 {
+  padding-left:15px;
+}
