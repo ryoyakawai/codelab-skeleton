@@ -266,8 +266,7 @@
     display: none;
   }
   paper-menu {
-    background-color:#f5f5f5;
-   
+    background-color:#f5f5f5;   
   }
   paper-item {
     cursor:pointer;
@@ -497,9 +496,11 @@
           var idx=this.selectedIdx;
           var tocItems=Array.prototype.slice.call(this.getElementsByTagName("paper-item"));
           for(var i=0; i<tocItems.length; i++) {
+              tocItems[i].blur();
+              tocItems[i].removeAttribute("aria-selected");
               tocItems[i].removeAttribute("selected");
-              tocItems[i].className=tocItems[i].className.replace(" selected", "");
-              tocItems[i].className=tocItems[i].className.replace(" iron-selected", "");
+              tocItems[i].className=tocItems[i].className.replace("selected", "");
+              tocItems[i].className=tocItems[i].className.replace("iron-selected", "");
               if(i==idx) tocItems[i].className+=" selected iron-selected";
           }
       },
@@ -667,7 +668,6 @@
           var tocElems=this.querySelector("#toc-items").getElementsByTagName("paper-item");
           this._updateTocCompleted.bind(this)(this.selectedIdx, tocElems);
           this._updateNavIconCompleted.bind(this)(this.selectedIdx+1, tocElems);
-
       },
       /**
        * Parses a time string in 'hh:mm:ss' format and returns number of seconds.
@@ -707,7 +707,7 @@
             this._updateNavIconCompleted.bind(this)(retVal.step, retVal.length);
             break;
         }
-        this.updateTocSelected();
+        this.updateTocSelected.bind(this)();
       },
       selectedIdxChanged: function(oldVal, newVal) {
           this.selectedIdx = parseInt(this.selectedIdx, 10);
