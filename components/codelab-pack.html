@@ -668,6 +668,10 @@
           var tocElems=this.querySelector("#toc-items").getElementsByTagName("paper-item");
           this._updateTocCompleted.bind(this)(this.selectedIdx, tocElems);
           this._updateNavIconCompleted.bind(this)(this.selectedIdx+1, tocElems);
+
+          document.addEventListener('code-snippet-copied', function(e){
+              analytics.snippetCopied(e.detail.snippet);
+         });
       },
       /**
        * Parses a time string in 'hh:mm:ss' format and returns number of seconds.
