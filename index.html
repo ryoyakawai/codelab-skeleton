@@ -28,7 +28,7 @@
 
   <body unresolved>
 
-    <codelab-pack label="Web MIDI APIの利用（x-webmidi:Polymer編）" 
+    <codelab-pack label="Web MIDI API（x-webmidi編）" 
                   feedback_link="https://github.com/ryoyakawai/x-webmidi/issues"
                   category=""
                   environment="">
@@ -45,6 +45,10 @@
           <li><img src="./images/bower_logo.png" width="16px" class="middle"><a href="//bower.io/" target="_blank">Bower</a>（インストール方法は後述）</li>
           <li>MIDIデバイス</li>
         </ul>
+        <h2>完成品ソースコード</h2>
+        <ul class="top" style="list-style-type: none">
+          <li><i class="material-icons middle">file_download</i><a href="./download/test_x-webmidi.zip">ソースコード</a></li>
+        </ul>        
       </codelab-article>
 
       <!-- 2 -->
@@ -61,7 +65,7 @@ Bowerをインストールするには、npm(Node Package Manager)のインス�
           <div class="indent15">
             <h3><img src="./images/windows_logo.png" width="18" class="middle">Windows</h3>
             <div class="indent15">
-              <h4><i class="material-icons middle">settings</i>nodejsのインストール <img src="./images/nodejs-logo.png" height="30" class="middle"></h4>
+              <h4><i class="material-icons middle">settings</i> nodejsのインストール <img src="./images/nodejs-logo.png" height="30" class="middle"></h4>
               <p class="top">
                 <a href="//nodejs.org" target="_blank">ココ</a>からインストーラをダウンロードしてインストールしてください。<br>コマンドプロンプトで<code>node</code>コマンドが有効になっていたらインストール成功です。
                 <codelab-snippet>
@@ -166,7 +170,7 @@ $ bower -v
       </codelab-article>
 
       <!-- 3 -->
-      <codelab-article step_label="x-webmidiのダウンロード" duration="3:00">
+      <codelab-article step_label="x-webmidiのダウンロード" duration="5:00">
         <p>bowerを使ってx-webmidiを取得します。<br>
           <h3><i class="material-icons middle">folder_open</i>アプリケーションを開発するディレクトリの作成</h3>
           <p>Chrome Dev Editorを起動します。<br><code>chrome://apps</code>からアプリケーションランチャーを表示して、<b>Chrome Dev Editor</b>をクリックでChrome Dev Editorは起動します。
@@ -377,7 +381,7 @@ function keyUpEvent(event) {
     midiout.sendRawMessage([0x80, 0x45, 0x7f], 0);
   }
 }</codelab-snippet>
-Output で選択した機器が <span class="input-font">[C]</span> を押す、離すで音が鳴る、止まると動作すれば完成です。
+Output で選択した機器が <span class="input-font">[C]</span> を押すで音が鳴り、 <span class="input-font">[C]</span> を離すで音が止まれば完成です。
         </p>
 
 
@@ -385,7 +389,7 @@ Output で選択した機器が <span class="input-font">[C]</span> を押す、
 
 
       <!-- 7 -->
-      <codelab-article step_label="応用：NSX-1を操作する" duration="20:00">
+      <codelab-article step_label="応用：NSX-1を操作する" duration="15:00">
         <br>
         NSX-1 は音源チップで、歌詞データを送信することで歌うことが可能です。<a href="https://www.switch-science.com/catalog/1490/" target="_blank">eVY1シールド</a>、<a href="http://otonanokagaku.net/nsx39/" target="_blank">ポケミク</a>が搭載しています。
         <h3><i class="material-icons middle">mode_edit</i>歌詞データを送る為の設定</h3>
@@ -397,7 +401,7 @@ Output で選択した機器が <span class="input-font">[C]</span> を押す、
           <codelab-snippet>
 &lt;div>
   &lt;link rel="import" href="./bower_components/x-webmidi/extras/wm-nsx1text/wm-nsx1text.html">
-  &lt;input id="text" size="70" value="あいうえおかきくけこあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこ">&lt;br>
+  &lt;input id="text" size="70" value="あいうえおかきくけこさしすせそ">&lt;br>
   &lt;wm-nsx1text id="evy1" type="evy1">&lt;/wm-nsx1text>
   &lt;wm-nsx1text id="poke39" type="poke39">&lt;/wm-nsx1text>
   &lt;button id="evy1text">eVY1用の歌詞として送信&lt;/button>
@@ -412,13 +416,13 @@ window.addEventListener('midioutput-updated:foo-output', function(event) {
     document.addEventListener('keydown', keyDownEvent);
     document.addEventListener('keyup', keyUpEvent);
     midiout=document.querySelector("#foo-output");
-    document.getElementById("evy1text").addEventListener("click", evy1text);
-    document.getElementById("poke39text").addEventListener("click", poke39text);
+    document.getElementById("evy1text").addEventListener("click", evy1text); // ◀ 追加
+    document.getElementById("poke39text").addEventListener("click", poke39text); // ◀ 追加
   } else {
     document.removeEventListener('keydown', keyDownEvent);
     document.removeEventListener('keyup', keyUpEvent);
-    document.getElementById("evy1text").removeEventListener("click", evy1text);
-    document.getElementById("poke39text").removeEventListener("click", poke39text);
+    document.getElementById("evy1text").removeEventListener("click", evy1text); // ◀ 追加
+    document.getElementById("poke39text").removeEventListener("click", poke39text); // ◀ 追加
     midiout="";
   }
 });</codelab-snippet>
@@ -426,34 +430,29 @@ window.addEventListener('midioutput-updated:foo-output', function(event) {
             <p>関数 は最終行以降に追記するとよいでしょう。</p>
             <codelab-snippet>
 function evy1text() {
-    var text=document.getElementById("text").value;
-    var out=document.getElementById("evy1").convertText2SysEx(text);
-    for(var i=0; i&lt;out.sysEx.length; i++) {
-      midiout.sendRawMessage(sysEx[i], 0);
-    }
-    setTimeout(function(){
-      playTone(text.length);
-    }, 500);  
+  var text=document.getElementById("text").value;
+  var out=document.getElementById("evy1").convertText2SysEx(text);
+  sendSysEx2Device(out);
+  playTone(text.length);
 }
 function poke39text() {
-    var text=document.getElementById("text").value;
-    var out=document.getElementById("poke39").convertText2SysEx(text);
-    for(var i=0; i&lt;out.sysEx.length; i++) {
-      midiout.sendRawMessage(sysEx[i], 0);
-    }
-    setTimeout(function(){
-      playTone(text.length);
-    }, 500);  
+  var text=document.getElementById("text").value;
+  var out=document.getElementById("poke39").convertText2SysEx(text);
+  sendSysEx2Device(out);
+  playTone(text.length);
+}
+function sendSysEx2Device(msg) {
+  for(var i=0; i&lt;msg.sysEx.length; i++) {
+    midiout.sendRawMessage(msg.sysEx[i], 0);
+  }
 }
 function playTone(count) {
-    var interval=800; // (ms)
-    var noteNo=69; // A4
-    for(var i=0; i&lt;count; i++) {
-        setTimeout(function() {
-          midiout.sendRawMessage([0x90, "0x"+(noteNo+i).toString(16), 0x7f], interval*i);
-          midiout.sendRawMessage([0x80, "0x"+(noteNo+i).toString(16), 0x7f], interval*(i+1));
-        });
-    }  
+  var interval=400; // (ms)
+  var noteNo=69; // A4
+  for(var i=1; i&lt;=count; i++) {
+    midiout.sendRawMessage([0x90, "0x"+(noteNo+i).toString(16), 0x7f], interval*i);
+    midiout.sendRawMessage([0x80, "0x"+(noteNo+i).toString(16), 0x7f], interval*(i+1));
+  }  
 }</codelab-snippet>
           </p>
           <p>実行することで以下の画面が表示され、ボタンをクリックすることでeVY1、またはポケミクが歌えば完成です。</p>
