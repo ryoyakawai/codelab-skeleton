@@ -3,7 +3,7 @@
   "name": "Web MIDI API(x-webmidi) Codelab",
   "short_name": "Web MIDI Codelab",
   "icons": [{
-        "src": "./images/webmidi-js-144x144",
+        "src": "./images/webmidi-js-144x144.png",
         "sizes": "144x144",
         "type": "image/png"
       }],
