@@ -1,0 +1,15 @@
+{
+  "name": "codelab_skelton",
+  "main": "Gruntfile.js",
+  "dependencies": {
+    "grunt": "~0.4.1"
+  },
+  "devDependencies": {
+    "grunt-banner": "~0.3.1",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-uglify": "^0.9.1",
+    "grunt-vulcanize": "~0.6.4",
+    "grunt-remove-logging": "^0.2.0"
+  }
+}
