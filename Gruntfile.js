@@ -10,6 +10,35 @@ module.exports = function(grunt) {
             src: 'src',
             release: 'release'
         },
+        // delete unnecessary files
+        clean: {
+            // delete inside of release directory
+            deleteReleaseFolder00: {
+                src: [
+                    '<%= dir.release %>/',
+                    '<%= dir.src %>*/.DS_Store',
+                    '<%= dir.src %>*/Thumbs.db'
+                ],
+            },
+            deleteReadmeEtcFile: {
+                src: [
+                    '<%= dir.release %>/bower_components/NodeBind/',
+                    '<%= dir.release %>/bower_components/TemplateBinding/',
+                    '<%= dir.release %>/bower_components/*/README.md',
+                    '<%= dir.release %>/bower_components/*/package.json',
+                    '<%= dir.release %>/bower_components/*/gruntfile.js',
+                    '<%= dir.release %>/bower_components/*/*bower.json',
+                    '<%= dir.release %>/bower_components/*/test',
+                    '<%= dir.release %>/bower_components/*/AUTHORS',
+                    '<%= dir.release %>/bower_components/*/codereview.settings',
+                    '<%= dir.release %>/bower_components/*/examples',
+                    '<%= dir.release %>/bower_components/*/build.log',
+                    '<%= dir.release %>/bower_components/*/demo.html',
+                    '<%= dir.release %>/bower_components/*/demo',
+                    '<%= dir.release %>/bower_components/*/index.html',
+                ]
+            }
+        },
         // copy files
         copy: {
             release: {
@@ -21,6 +50,12 @@ module.exports = function(grunt) {
                         dest: "<%= dir.release %>/"
                     }
                 ]
+            }
+        },
+        // remove-logging
+        removelogging: {
+            release: {
+                src: ['<%= dir.release %>/components/*.html']
             }
         },
         // vulcanize
@@ -53,7 +88,10 @@ module.exports = function(grunt) {
 
     // Grunt command for creating deliver release
     grunt.registerTask('release',[
+        'clean:deleteReleaseFolder00',
         'copy:release',
+        'removelogging:release',
+        'clean:deleteReadmeEtcFile',
     ]);
 
     grunt.registerTask('eatwarnings', function() {
