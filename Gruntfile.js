@@ -78,9 +78,9 @@ module.exports = function(grunt) {
                     removeComments: true,
                     removeCommentsFromCDATA: true,
                     removeCDATASectionsFromCDATA: true,
-                    collapseWhitespace: true,
+                    collapseWhitespace: false,
                     removeRedundantAttributes: true,
-                    removeOptionalTags: true,
+                    removeOptionalTags: false,
                     minifyJS: true,
                     minifyCSS: true
                 },
@@ -170,7 +170,7 @@ module.exports = function(grunt) {
         'uglify:default',
         'cssmin:maincss',
         'cssmin:componentscss',
-        //'htmlmin:all',
+        'htmlmin:all',
         'vulcanize:default',
         'clean:deleteReadmeEtcFile',
     ]);

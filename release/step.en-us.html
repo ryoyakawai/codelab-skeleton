@@ -1,10 +1,7 @@
 <template>
-    <codelab-pack label="Web MIDI API（with x-webmidi）" 
-                  feedback_link="https://github.com/ryoyakawai/x-webmidi/issues"
-                  category=""
-                  environment="">
+    <codelab-pack label="Web MIDI API（with x-webmidi）" feedback_link="https://github.com/ryoyakawai/x-webmidi/issues" category="" environment="">
 
-      <!-- 1 -->
+      
       <codelab-article step_label="Overview" duration="1:00">
         <h2>Background</h2>
         <p class="top">x-webmidi is the one of the elements for Web MIDI API which is developed with <a href="https://www.polymer-project.org" target="_blank">Polymer</a>, which is the library for Web Components developed by Google. <br>
@@ -18,12 +15,12 @@ With x-webmidi, web MIDI application is able to be developed in declarative way,
           <li>MIDI Devices</li>
         </ul>
         <h2>Developed Source Code</h2>
-        <ul class="top" style="list-style-type: none">
+        <ul class="top" style="list-style-type:none">
           <li><i class="material-icons middle">file_download</i><a href="./download/test_x-webmidi.zip">Download Source Code</a></li>
         </ul>        
       </codelab-article>
 
-      <!-- 2 -->
+      
       <codelab-article step_label="Preparing Development Environment" duration="10:00">
         <h2><img src="./images/chrome_flat_by_packrobottom.png" width="20" class="middle">Installing Google Chrome</h2>
         <p class="top">Download suitable package for your platform from <a href="//www.google.co.jp/chrome/browser/" target="_blank">here</a>. And click/tap "Add to Chrome" to install.</p>
@@ -46,7 +43,7 @@ C:\Users\hogehoge>node --version
 v0.8.18</codelab-snippet>
 
                 <h4><i class="material-icons middle">settings</i>Installing Git <img src="./images/Git-Logo-2Color.png" height="20" class="middle"></h4>
-                <p class="top">
+                </p><p class="top">
                   Download installer from <a href="//msysgit.github.io/" target="_blank">here</a>, and execute it to install git.<br>After installation, if <code>git</code> command in command prompt is activated, nodejs is successfully installed.
                   <codelab-snippet>
 C:\Users\hogehoge>git --version
@@ -127,7 +124,7 @@ v0.12.5
 </codelab-snippet>
 
                 <h4><i class="material-icons middle">settings</i>Installing Bower <img src="./images/bower_logo.png" height="20" class="middle"></h4>
-                <p class="top">
+                </p><p class="top">
                   Use npm to install Bower. Use command below to install Bower.
                   <codelab-snippet>
 $ npm install bower -g</codelab-snippet>
@@ -136,45 +133,45 @@ $ npm install bower -g</codelab-snippet>
 $ bower -v
 1.4.1</codelab-snippet>
 
-            </div>
+            </p></div>
           </div>
-          <p>Now, environment is successfully build up</p>
+          </p><p>Now, environment is successfully build up</p>
 
       </codelab-article>
 
-      <!-- 3 -->
+      
       <codelab-article step_label="Downloading x-webmidi" duration="5:00">
         <p>Get x-webmidi by bower<br>
           <h3><i class="material-icons middle">folder_open</i>Creating directory where to build application.</h3>
-          <p>Launch Chrome Dev Editor<br>Input <code>chrome://apps</code> in URL bar in Chrome, and Click <b>Chrome Dev Editor</b> to launch Chrome Dev Editor.
+          </p><p>Launch Chrome Dev Editor<br>Input <code>chrome://apps</code> in URL bar in Chrome, and Click <b>Chrome Dev Editor</b> to launch Chrome Dev Editor.
             <div class="flex-center">
               <img src="./images/xwebmidi-launch.png" width="420" class="bordered">
             </div>
           </p>
 
           <p>
-            Specify the working directory in <span class="input-font">[CHOOSE FOLDER]</span> area in the dialog of popping up when to click/tap the <i class="material-icons middle" style="color:rgba(210, 63, 49, 1);">add_circle</i> button in right corner in below of left pain.<br>
+            Specify the working directory in <span class="input-font">[CHOOSE FOLDER]</span> area in the dialog of popping up when to click/tap the <i class="material-icons middle" style="color:rgba(210,63,49,1)">add_circle</i> button in right corner in below of left pain.<br>
             <span class="notice-01">※ First time in launching Chrome Deve Editor, the pop up to specify "Project Name" and "Script type" appears. In here, specifying <span class="input-font">~/Documents/chrome_dev_editor/</span> for that.</span> 
             <div class="flex-center">
               <img src="./images/xwebmidi-03.png" width="420" class="bordered">
             </div>
-            <p style="margin-bottom:2px;">Specifying and selected these values in here.</p>
-            <div class="sample-input-01-blue" style="margin-top:2px;">
+            </p><p style="margin-bottom:2px">Specifying and selected these values in here.</p>
+            <div class="sample-input-01-blue" style="margin-top:2px">
               Project Name: <span class="input-font">test_x-webmidi</span><br>
               Project type: <span class="input-font">JavaScript web app</span>
             </div>
-          </p>
+          
 
           <p>
             Getting path of the directory that just created.<br>Displaying path name, first clicking the "Project Name", and then click the property displayed by previous click. 
             <div class="flex-center">
               <img src="./images/xwebmidi-04.png" width="420" class="bordered">
             </div>
-            <p style="margin-bottom:2px;">Copy the <span class="input-font">Location</span> which is displayed.</p>
+            </p><p style="margin-bottom:2px">Copy the <span class="input-font">Location</span> which is displayed.</p>
             <div class="flex-center">
               <img src="./images/xwebmidi-05.png" width="420" class="bordered">
             </div>
-          </p>
+          
 
           <h3><i class="material-icons middle">cloud_download</i>Downloading x-webmidi</h3>
           <p>
@@ -210,11 +207,11 @@ Success when bower_components directory is displayed in file explorer in the lef
             </div>
           </p>
 
-        </p>
+        
       </codelab-article>
 
 
-      <!-- 4 -->
+      
       <codelab-article step_label="Preparing to use x-webmidi" duration="1:00">
         <h3><i class="material-icons middle">mode_edit</i> Adding core Element of x-webmidi</h3>
         <p>Keep using the project which is created in Chrome Dev Editor in previous step.<br> Import the core element of x-webmidi to inside of <span class="input-font">head</span> tag located in <span class="input-font">index.html</span>.
@@ -228,7 +225,7 @@ Success when bower_components directory is displayed in file explorer in the lef
 
       </codelab-article>
 
-      <!-- 5 -->
+      
       <codelab-article step_label="Handling MIDI message from input device" duration="5:00">
         <br>
         Connect MIDI devices(which having MIDI input) to your computer.
@@ -242,11 +239,11 @@ Success when bower_components directory is displayed in file explorer in the lef
           <div class="flex-center">
             <img src="./images/xwebmidi-07.png" width="580" class="bordered">
           </div>
-<p>Success when browser displays page like below. </p>
+</p><p>Success when browser displays page like below. </p>
           <div class="flex-center">
             <img src="./images/xwebmidi-08.png" width="420" class="bordered">
           </div>
-        </p>
+        
 <br>
         <h3><i class="material-icons middle">mode_edit</i>Display MIDI message from MIDI Input device</h3>
         <p>Add <span class="input-font">div</span> tag in <span class="input-font">body</span> to display recieved MIDI message from MIDI input devices in <span class="input-font">index.html</span>.
@@ -285,10 +282,10 @@ Select one of the MIDI input devices from the dropdown list. Success when be dis
             <img src="./images/xwebmidi-09.png" width="520" class="bordered">
           </div>
 
-      </codelab-article>
+      </p></codelab-article>
 
 
-      <!-- 6 -->
+      
       <codelab-article step_label="Manipulate MIDI Output Devices" duration="5:00">
         <br>
         Connect MIDI devices(which having MIDI output) to your computer.
@@ -297,7 +294,7 @@ Select one of the MIDI input devices from the dropdown list. Success when be dis
           <codelab-snippet>
 &lt;x-webmidioutput id="foo-output" autoreselect="true"&gt;&lt;/x-webmidioutput&gt;</codelab-snippet> 
            Now, ready to display MIDI output devices.<br>
-<p>Success when browser displays page like below. </p>
+</p><p>Success when browser displays page like below. </p>
           <div class="flex-center">
             <img src="./images/xwebmidi-11.png" width="420" class="bordered">
           </div>
@@ -320,7 +317,7 @@ Select one of the MIDI input devices from the dropdown list. Success when be dis
 
   &lt;script src="main.js">&lt;/script> 
 &lt;/body></codelab-snippet>
-        </p>
+        
 
 <br>
 
@@ -360,7 +357,7 @@ Success when behaving like this. Success when behaving like this. Plays sound by
       </codelab-article>
 
 
-      <!-- 7 -->
+      
       <codelab-article step_label="Experiment: Manipulate NSX-1" duration="15:00">
         <br>
         NSX-1 is the IC chip, which is developed by Yamaha, is able to sing a song. "NSX-1 inside" products: <a href="https://international.switch-science.com/catalog/1489/" target="_blank">eVY1 Shield</a>、<a href="http://www.mtv81.com/news/vocaloid-at-your-fingertips-with-pocket-miku/" target="_blank">Pocket Miku</a> 
@@ -371,7 +368,7 @@ In x-webmidi, this declaration is even provided in declarative way.<br>
 Changing attribute of <span class="input-font">sysex</span> to <span class="input-font">true</span> in <span class="input-font">x-webmidirequestaccess</span>, which element added at step of <b>"Preparing to use x-webmidi"</b>. This declaration is all you need to handle SysEx with x-webmidi.
           <codelab-snippet>
 &lt;x-webmidirequestaccess sysex="true" input="true" output="true">&lt;/x-webmidirequestaccess></codelab-snippet>
-          <p>Add code below in where to desire to display lyrics input box in <span class="input-font">body</span> of <span class="input-font">index.html</span>.
+          </p><p>Add code below in where to desire to display lyrics input box in <span class="input-font">body</span> of <span class="input-font">index.html</span>.
 
           <codelab-snippet>
 &lt;div>
@@ -430,13 +427,13 @@ function playTone(count) {
     midiout.sendRawMessage([0x80, "0x"+(noteNo+i).toString(16), 0x7f], interval*(i+1));
   }  
 }</codelab-snippet>
-          </p>
+          
           <p>Success when eVY1 Shield or Poket-Miku sings along with clicking/tapping send button.</p>
           <div class="flex-center">
             <img src="./images/xwebmidi-12.png" width="580" class="bordered">
           </div>
 
-        </p>
+        
 
       </codelab-article>
 
