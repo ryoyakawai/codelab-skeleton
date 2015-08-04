@@ -36,6 +36,10 @@ module.exports = function(grunt) {
                     '<%= dir.release %>/bower_components/*/demo.html',
                     '<%= dir.release %>/bower_components/*/demo',
                     '<%= dir.release %>/bower_components/*/index.html',
+                    '<%= dir.release %>/bower_components/*/LICENSE*',
+                    '<%= dir.release %>/bower_components/*/History.md',
+                    '<%= dir.release %>/bower_components/*/guides',
+                    '<%= dir.release %>/bower_components/*/Makefile',
                 ]
             }
         },
@@ -67,13 +71,51 @@ module.exports = function(grunt) {
                 dest: '<%= dir.release %>/js/'
             },
         },
+        // compress HTML files
+        htmlmin: {
+            all: {
+                options: {
+                    removeComments: true,
+                    removeCommentsFromCDATA: true,
+                    removeCDATASectionsFromCDATA: true,
+                    collapseWhitespace: true,
+                    removeRedundantAttributes: true,
+                    removeOptionalTags: true,
+                    minifyJS: true,
+                    minifyCSS: true
+                },
+                files: [
+                    {
+                        expand: true,
+                        cwd: '<%= dir.release %>/',
+                        src: ['step.*.html'],
+                        dest: '<%= dir.release %>/'
+                    },
+                ]
+            }
+        },
+        // compress CSS file
+        cssmin: {
+            maincss: {
+                expand: true,
+                cwd: '<%= dir.release %>/css/',
+                src: ['*.css'],
+                dest: '<%= dir.release %>/css/'
+            },
+            componentscss: {
+                expand: true,
+                cwd: '<%= dir.release %>/components/',
+                src: ['*.css'],
+                dest: '<%= dir.release %>/components/'
+            }
+        },
         // vulcanize
         vulcanize: {
             default: {
                 options: {
                     strip: true,
                     csp: false,
-                    inline: true,
+                    inline: false,
                     excludes: {
                         imports: [
                             "step.*.html",
@@ -82,6 +124,26 @@ module.exports = function(grunt) {
                     }
                 },
                 files: {
+                    //'<%= dir.release %>/bower_components/paper-material/paper-material.html': '<%= dir.release %>/bower_components/paper-material/paper-material.html',
+                    //'<%= dir.release %>/bower_components/iron-icons/iron-icons.html': '<%= dir.release %>/bower_components/iron-icons/iron-icons.html',
+                    //'<%= dir.release %>/bower_components/iron-selector/iron-selector.html': '<%= dir.release %>/bower_components/iron-selector/iron-selector.html',
+                    //'<%= dir.release %>/bower_components/neon-animation/neon-animated-pages.html': '<%= dir.release %>/bower_components/neon-animation/neon-animated-pages.html',
+                    //'<%= dir.release %>/bower_components/neon-animation/neon-animatable.html': '<%= dir.release %>/bower_components/neon-animation/neon-animatable.html',
+                    //'<%= dir.release %>/bower_components/neon-animation/neon-animations.html': '<%= dir.release %>/bower_components/neon-animation/neon-animations.html',
+                    //'<%= dir.release %>/bower_components/paper-dialog/paper-dialog.html': '<%= dir.release %>/bower_components/paper-dialog/paper-dialog.html',
+                    //'<%= dir.release %>/bower_components/paper-styles/paper-styles.html': '<%= dir.release %>/bower_components/paper-styles/paper-styles.html',
+                    //'<%= dir.release %>/bower_components/paper-button/paper-button.html': '<%= dir.release %>/bower_components/paper-button/paper-button.html',
+                    //'<%= dir.release %>/bower_components/paper-icon-button/paper-icon-button.html': '<%= dir.release %>/bower_components/paper-icon-button/paper-icon-button.html',
+                    //'<%= dir.release %>/bower_components/paper-menu/paper-menu.html': '<%= dir.release %>/bower_components/paper-menu/paper-menu.html',
+                    //'<%= dir.release %>/bower_components/paper-header-panel/paper-header-panel.html': '<%= dir.release %>/bower_components/paper-header-panel/paper-header-panel.html',
+                    //'<%= dir.release %>/bower_components/paper-drawer-panel/paper-drawer-panel.html': '<%= dir.release %>/bower_components/paper-drawer-panel/paper-drawer-panel.html',
+                    //'<%= dir.release %>/bower_components/paper-item/paper-item.html': '<%= dir.release %>/bower_components/paper-item/paper-item.html',
+                    //'<%= dir.release %>/bower_components/paper-ripple/paper-ripple.html': '<%= dir.release %>/bower_components/paper-ripple/paper-ripple.html',
+                    //'<%= dir.release %>/bower_components/paper-progress/paper-progress.html': '<%= dir.release %>/bower_components/paper-progress/paper-progress.html',
+                    '<%= dir.release %>/components/polymer-cookie.html': '<%= dir.release %>/components/polymer-cookie.html',
+                    '<%= dir.release %>/components/codelab-pack.html': '<%= dir.release %>/components/codelab-pack.html',
+                    '<%= dir.release %>/components/codelab-article.html': '<%= dir.release %>/components/codelab-article.html',
+                    //
                     //'<%= dir.release %>/components/import.html': '<%= dir.release %>/components/import.html',
                     //'<%= dir.release %>/components/import_papers.html': '<%= dir.release %>/components/import_papers.html',
                     //'<%= dir.release %>/components/import_papers.html': '<%= dir.release %>/components/import_papers00.html',
@@ -106,6 +168,9 @@ module.exports = function(grunt) {
         'copy:release',
         'removelogging:release',
         'uglify:default',
+        'cssmin:maincss',
+        'cssmin:componentscss',
+        //'htmlmin:all',
         'vulcanize:default',
         'clean:deleteReadmeEtcFile',
     ]);
