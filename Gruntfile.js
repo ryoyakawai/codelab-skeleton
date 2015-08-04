@@ -55,8 +55,17 @@ module.exports = function(grunt) {
         // remove-logging
         removelogging: {
             release: {
-                src: ['<%= dir.release %>/components/*.html']
+                src: ['<%= dir.release %>/components/*.html', '<%= dir.release %>/js/*.js']
             }
+        },
+        // compress JS files
+        uglify: {
+            default: {
+                expand: true,
+                cwd: '<%= dir.release %>/js/',
+                src: ["*.js"],
+                dest: '<%= dir.release %>/js/'
+            },
         },
         // vulcanize
         vulcanize: {
@@ -68,12 +77,17 @@ module.exports = function(grunt) {
                     excludes: {
                         imports: [
                             "step.*.html",
-                            "main.js"
+                            "js/main.js"
                         ]
                     }
                 },
                 files: {
-                    '<%= dir.release %>/index.html': '<%= dir.release %>/index.html'
+                    //'<%= dir.release %>/components/import.html': '<%= dir.release %>/components/import.html',
+                    //'<%= dir.release %>/components/import_papers.html': '<%= dir.release %>/components/import_papers.html',
+                    //'<%= dir.release %>/components/import_papers.html': '<%= dir.release %>/components/import_papers00.html',
+                    //'<%= dir.release %>/components/import_codelabs.html': '<%= dir.release %>/components/import_codelabs.html',
+                    //'<%= dir.release %>/components/import_papers01.html': '<%= dir.release %>/components/import_papers01.html',
+                    //'<%= dir.release %>/index.html': '<%= dir.release %>/index.html',
                 }
             }
         }
@@ -91,6 +105,8 @@ module.exports = function(grunt) {
         'clean:deleteReleaseFolder00',
         'copy:release',
         'removelogging:release',
+        'uglify:default',
+        'vulcanize:default',
         'clean:deleteReadmeEtcFile',
     ]);
 

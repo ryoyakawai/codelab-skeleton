@@ -48,3 +48,10 @@ span.notice-01 {
   font-size:0.8em;
   margin-left:10px;
 }
+p.langdescription { 
+  font-size:1.2em;
+  font-weight:300;
+}
+p.langdescription, p.selectlang { 
+  text-align:center;
+}
