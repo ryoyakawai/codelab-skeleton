@@ -17,6 +17,10 @@ var language_name={
         "Deutsch (Deutschland)",
         "German (Germany)"
     ],
+    "ko-kr": [
+        "한국어",
+        "Korean"
+    ],
     "zh-cn": [
         "中文(中国大陆)",
         "Chinese (PRC)"
