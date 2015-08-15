@@ -14,14 +14,13 @@ var analytics = {
 
         if (step) {
             path = [window.location.pathname];
-            path.push('#');
-            path.push(step);
+            path.push(window.location.search);
+            path.push(window.location.hash);
             path = path.join('');
-
+            console.log(path);
         } else {
             path = window.location.pathname;
         }
-
         ga('set', 'dimension1', environment);
         for (var question in survey_answers) {
             ga('set', 'dimension2', question + ': ' + survey_answers[question]);
@@ -30,8 +29,8 @@ var analytics = {
         ga('send', 'pageview', {'page': path, 'title': document.title});
     },
 
-    complete: function(codelab) {
-        ga('send', 'event', 'codelab', 'complete', codelab, 1);
+    complete: function() {
+        ga('send', 'event', 'codelab', 'complete', (document.title.split(" | "))[0], 1);
     },
 
     survey: function(question, answer) {
@@ -539,12 +538,13 @@ analytics.init();
           this.$["language"].className=this.$["language"].className.replace(" hidden", "");
       },
       tracking: function() {
-          var currentStep = this.selectedIdx+1;
-          if(typeof this.steps=="undefined") {
-              analytics.pageview(currentStep, window.location);
-          } else {
+          var currentStep = parseInt(this.selectedIdx)+1;
+          if(typeof currentStep!="undefined") {
               if (currentStep == this.steps.length) {
-                  analytics.complete(this.codelab);
+                  analytics.complete();
+              } 
+              else {
+                  analytics.pageview(currentStep, window.location);
               }
           }
           console.log("[Analytics] tracking");
