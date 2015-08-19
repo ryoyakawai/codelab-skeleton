@@ -40,6 +40,7 @@ module.exports = function(grunt) {
                     '<%= dir.release %>/bower_components/*/History.md',
                     '<%= dir.release %>/bower_components/*/guides',
                     '<%= dir.release %>/bower_components/*/Makefile',
+                    '<%= dir.release %>/bower_components/*/COPYING',
                 ]
             }
         },

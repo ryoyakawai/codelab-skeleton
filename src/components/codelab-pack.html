@@ -11,13 +11,11 @@ var analytics = {
 
     pageview: function(step, environment, survey_answers) {
         var path = null;
-
         if (step) {
             path = [window.location.pathname];
             path.push(window.location.search);
-            path.push(window.location.hash);
+            path.push(window.location.hash.replace("#", "="));
             path = path.join('');
-            console.log(path);
         } else {
             path = window.location.pathname;
         }
@@ -26,6 +24,7 @@ var analytics = {
             ga('set', 'dimension2', question + ': ' + survey_answers[question]);
         }
 
+        console.log("path: ", path);
         ga('send', 'pageview', {'page': path, 'title': document.title});
     },
 
@@ -890,7 +889,8 @@ analytics.init();
                   //window.location.search="";
                   //window.location.hash=window.location.hash;
               }.bind(this));
-
+                  
+              this.tracking.bind(this)();
           });
       },
       detached: function() {
