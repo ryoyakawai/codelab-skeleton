@@ -1,0 +1,8 @@
+{
+  "notifications": {
+    "title": "Prepared Notification 00",
+    "body": "Hey this is the message from JSON.",
+    "icon": "./images/webmidi-js-144x144.png",
+    "tag": "simple-push-demo-notification-tag"
+  }
+}
