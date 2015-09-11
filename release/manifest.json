@@ -7,6 +7,7 @@
         "sizes": "144x144",
         "type": "image/png"
       }],
-  "start_url": "https://webmusicdevelopers.appspot.com/codelabs/x-webmidi/index.html",
-  "display": "standalone"
+  "start_url": "https://localhost/~kawai/webmusicdevelopers.appspot.com/codelabs/x-webmidi/index.html",
+  "display": "standalone",
+  "gcm_sender_id": "275993465286"
 }
