@@ -3,7 +3,7 @@ window.addEventListener('load', function(event) {
         navigator.serviceWorker.register('./sw.js').then(function(registration) {
             console.info('[App:Registration] Successfully registered ServiceWorker with scope: ', registration.scope);
             // Push Notification
-            var authKey="AIzaSyCdF_Dhs8caD4_T9KH_qIKfRZAwHy1kdv4";
+            var authKey="AIzaSyDR4ls7dzk7fXYbBOA50ws-jZ9-UsGulog";
             if(location.hostname!="localhost") {
                 console.info("[App:Push] Denied activation because of hostname. "
                              +"Host name is required to be \"localhost\". ");
