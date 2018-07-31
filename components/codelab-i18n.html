@@ -1,0 +1,99 @@
+<dom-module id="codelab-i18n">
+  <style>
+  ul {
+    display: block;
+    position: relative;
+    background-color: #fff;
+    box-shadow: 0px 2px 6px #ccc;
+    margin: 15px 0px 0px 0px;
+    padding:0;
+    border-radius: 3px;
+  }
+  [vertical-align="top"] ul {
+    margin-top: 0;
+  }
+  [vertical-align="bottom"] ul {
+    margin-bottom: 0;
+  }
+  li {
+    display: block;
+    position: relative;
+    margin: 0;
+    padding: 0;
+  }
+  a {
+    display: block;
+    position: relative;
+    padding: 1em;
+    text-decoration: none;
+  }
+  li:not(:last-of-type) {
+    border-bottom: 1px solid #eee;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  </style>
+  <template>
+      <x-select>
+        <button class="dropdown-trigger">Basic</button>
+        <ul class="dropdown-content">
+          <template is="dom-repeat" items="{{langsarray}}">
+            <li><a href="{{item.link}}">{{item.name}}</a></li>
+          </template>
+        </ul>
+      </x-select>
+      <span id="imports"></span>
+  </template>
+  <script>
+  Polymer({
+      is: "codelab-i18n",
+      properties: {
+          displang: {
+              type: String,
+              value: "ja",
+              observer: "dispLangUpdated"
+          },
+          langs: {
+              type: Array,
+          }
+      },
+      ready: function() {
+          this.langsarray=[];
+          var tmplangs=[];
+          for(var key in this.langs) {
+              var elem=document.createElement("link");
+              elem.rel="import";
+              elem.href=this.langs[key].file;
+              elem.id=key;
+              this.appendChild(elem);
+              tmplangs.push({"name":this.langs[key].name, "file":this.langs[key].file, "link":"#"+key});
+          }
+          this.langsarray=tmplangs;
+
+          this.insertLang();
+      },
+      attached: function() {
+          // used be a domReady
+          this.async(function() {
+          });
+      },
+      dispLangUpdated: function(event) {
+          console.log("dispLangUpdated ", event);
+      },
+      insertLang: function(lang) {
+          if(typeof lang=="undefined") {
+              lang=this.displang;
+          }
+          //var insert=this.$[lang].import.querySelector("template");
+          console.log(Polymer.dom(this.root));
+          console.log(lang, this.querySelector("#"+lang).import);
+/*
+          document.querySelector("#steps").appendChild(
+              document.importNode(insert.content, true)
+          );
+*/
+      }
+  });
+  </script>
+</dom-module>

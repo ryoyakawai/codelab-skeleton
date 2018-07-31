@@ -307,6 +307,15 @@
     line-height: 24px;
     /* Code snippets */
   }
+  #i18n {
+    color:red;
+    position:absolute;
+    top:10px;
+    right:100px;
+    height:20px;
+    line-height:10px;
+  }
+
   </style>
   <template>
     <polymer-cookie name="codelabs" id="cookie" value$="{{cookie}}"></polymer-cookie>
@@ -314,6 +323,10 @@
       <div class="paper-header">
         <iron-icon id="menu_button" icon="menu" noink="" on-click="toggleMenu" role="button" tabindex="0" aria-label="menu"></iron-icon>
         <h1 id="title" class="title" flex></h1>
+
+        <div id="i18n"style="color:red">
+          <codelab-i18n id="i18n-config" displang="ja" langs='{"ja": {"name":"日本語", "file":"step.ja.html"}, "en": {"name":"English", "file":"step.en.html"}}'></codelab-i18n>
+        </div>
         <div>
           <div id="countdown" title="Time remaining" hidden?="{{duration == 0}}">
             <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
@@ -346,7 +359,7 @@
       <div main id="drawerpanel_main">
         
         <neon-animated-pages id="codelab-pages" class="flex" selected="[[selectedIdx]]" entry-animation="[[entryAnimation]]" exit-animation="[[exitAnimation]]">
-          <content></content>        
+          <content></content>
         </neon-animated-pages>
 
         <div id="page_control">
@@ -359,6 +372,8 @@
             <paper-ripple class="circle" recenters></paper-ripple>
           </div>
         </div>
+
+
 
     </paper-drawer-panel>
     <script>
@@ -692,11 +707,30 @@
           console.log(event.target);
       },
       setSelectedStepFromHash: function() {
-        var stepFromHash = window.location.hash ?
-            parseInt(window.location.hash.replace('#', '')) : 1;
-        if (stepFromHash != this.selectedIdx) {
+          var stepLangFromHash=["", ""];
+          stepLangFromHash=window.location.hash 
+                              ? window.location.hash.replace("#", "").split(":") : ["", ""] ;
+          var lang=this.$["i18n-config"].displang, step=0;
+          if(typeof stepLangFromHash[0]!="undefined" && stepLangFromHash[0]!="") {
+              lang=stepLangFromHash[0];
+              this.$["i18n-config"].displang=lang;
+          }
+          if(typeof stepLangFromHash[1]!="undefined" && stepLangFromHash[1]!="") {
+              step=parseInt(stepLangFromHash[1]);
+          } else {
+              step=0;
+          }
+
+          console.log(lang);
+          console.log(step); 
+
+          /* // chacking hash #
+          var stepFromHash = 
+          parseInt(window.location.hash.replace('#', '')) : 1;
+          if (stepFromHash != this.selectedIdx) {
           this.selectedIdx = stepFromHash;
-        }
+          }
+           */
       },
       handleKeyShortcuts: function(e) {
         switch(e.keyCode) {
